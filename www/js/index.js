@@ -46,6 +46,7 @@ var app = {
 						document.getElementById("user_html").innerHTML = "Failed..";
 				};
 				window.plugins.uniqueDeviceID.get(success, fail);
+				//initFbApp();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -59,3 +60,15 @@ var app = {
         console.log('Received Event: ' + id);
     }
 };
+
+var fbLoginSuccess = function (userData) {
+		alert("UserInfo: " + JSON.stringify(userData));
+}
+		 
+function initFbApp() {
+		facebookConnectPlugin.login(["public_profile"],
+		    fbLoginSuccess,
+		    function (error) { alert("" + error) }
+		);
+}
+

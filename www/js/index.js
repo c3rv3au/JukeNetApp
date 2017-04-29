@@ -46,7 +46,7 @@ var app = {
 						document.getElementById("user_html").innerHTML = "Failed..";
 				};
 				window.plugins.uniqueDeviceID.get(success, fail);
-				//initFbApp();
+				initFbApp();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

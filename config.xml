@@ -114,10 +114,9 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugin-uniquedeviceid" spec="https://github.com/Paldom/UniqueDeviceID.git" />		
-		<plugin name="com.phonegap.plugins.facebookconnect" source="pgb">
-        <param name="APP_ID" value="1600570720267450" />
-        <param name="APP_NAME" value="JukeNet" />
-    </gap:plugin>
-
+    <plugin name="cordova-plugin-uniquedeviceid" spec="https://github.com/Paldom/UniqueDeviceID.git" />
+    <plugin name="cordova-plugin-facebook4" spec="~1.7.4">
+        <variable name="APP_ID" value="1600570720267450" />
+        <variable name="APP_NAME" value="JukeNet" />
+    </plugin>
 </widget>

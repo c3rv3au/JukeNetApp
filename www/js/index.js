@@ -38,10 +38,12 @@ var app = {
 				function success(uuid)
 				{
 						console.log(uuid);
+						document.getElementById("user_html").innerHTML = uuid;
 				};
 				function fail(uuid)
 				{
 						console.log("Fail to get an uuid... " + uuid);
+						document.getElementById("user_html").innerHTML = "Failed..";
 				};
 				window.plugins.uniqueDeviceID.get(success, fail);
     },

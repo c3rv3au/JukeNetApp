@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.toutrix.jukenet" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.toutrix.jukenet" version="0.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>JukeNet</name>
     <description>
-        Hello World sample application that responds to the deviceready event.
+        JukeNet will play music.
     </description>
     <author email="c3rv3au@gmail.com" href="http://toutrix.com">
         TouTrix Team
@@ -11,6 +11,7 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion"      value="14" />
     <preference name="android-targetSdkVersion"   value="14" /> 
+		<preference name="android-build-tool" value="gradle" />
     <plugin name="cordova-plugin-battery-status" source="npm" spec="~1.1.1" />
     <plugin name="cordova-plugin-camera" source="npm" spec="~2.1.1" />
     <plugin name="cordova-plugin-media-capture" source="npm" spec="~1.2.0" />

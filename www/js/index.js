@@ -64,7 +64,8 @@ var app = {
 var fbLoginSuccess = function (userData) {
 	console.log("UserInfo: " + JSON.stringify(userData));
 	alert(JSON.stringify(userData));
-	window.location.href = "http://toutrix.com/jukenet?fbUserId=" + userData.id;
+	alert(JSON.stringify(userData.authResponse.userID));
+	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
 }
 		 
 function initFbApp() {

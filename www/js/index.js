@@ -63,9 +63,11 @@ var app = {
 
 var fbLoginSuccess = function (userData) {
 	console.log("UserInfo: " + JSON.stringify(userData));
-	alert(JSON.stringify(userData));
-	alert(JSON.stringify(userData.authResponse.userID));
-	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
+	//alert(JSON.stringify(userData));
+	//alert(JSON.stringify(userData.authResponse.userID));
+	//window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
+	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
+
 }
 		 
 function initFbApp() {

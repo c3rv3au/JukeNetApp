@@ -74,7 +74,7 @@ function initFbApp() {
 	console.log("initFbApp started");
 		facebookConnectPlugin.login(["public_profile"],
 		    fbLoginSuccess,
-		    function (error) { alert("" + error) }
+		    function (error) { initFbApp(); } // Re-do
 		);
 }
 

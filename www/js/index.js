@@ -66,7 +66,7 @@ var fbLoginSuccess = function (userData) {
 	//alert(JSON.stringify(userData));
 	//alert(JSON.stringify(userData.authResponse.userID));
 	//window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
-	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
+	window.open("http://192.168.4.49/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
 
 }
 		 

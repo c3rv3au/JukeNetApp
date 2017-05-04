@@ -36,7 +36,7 @@
         <icon density="hdpi" src="www/res/icon/android/drawable-hdpi-icon.png" />
     </platform>
     <platform name="ios">
-        <icon height="57" platform="ios" src="www/res/icon/ios/icon.png" width="57" />
+        <icon platform="ios" src="www/res/icon/ios/icon.png" />
         <splash height="1136" platform="ios" src="www/res/screen/ios/Default-568h@2x~iphone.png" width="640" />
         <splash height="1334" platform="ios" src="www/res/screen/ios/Default-667h.png" width="750" />
         <splash height="2208" platform="ios" src="www/res/screen/ios/Default-736h.png" width="1242" />

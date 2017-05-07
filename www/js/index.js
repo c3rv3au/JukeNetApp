@@ -64,17 +64,29 @@ var app = {
 var fbLoginSuccess = function (userData) {
 	console.log("UserInfo: " + JSON.stringify(userData));
 	//alert(JSON.stringify(userData));
-	alert(JSON.stringify(userData.authResponse.userID));
+	//alert(JSON.stringify(userData.authResponse.userID));
 	//window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
 	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
+}
 
+function loginFb() {
+	facebookConnectPlugin.login(["public_profile"],
+	   fbLoginSuccess,
+	   function (error) { initFbApp(); } // Re-do
+	);
 }
 		 
 function initFbApp() {
 	console.log("initFbApp started");
-		facebookConnectPlugin.login(["public_profile"],
-		    fbLoginSuccess,
-		    function (error) { initFbApp(); } // Re-do
-		);
+	facebookConnectPlugin.getLoginStatus(function (status) {
+		if (status.status == "connected") {
+			fbLoginSuccess(status);
+		} else {
+			loginFb();
+		}
+	}, function() {
+		loginFb();
+	});
+
 }
 

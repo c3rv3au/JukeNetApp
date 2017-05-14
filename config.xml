@@ -53,7 +53,8 @@
         <icon height="29" platform="ios" src="www/res/icon/ios/icon-small.png" width="29" />
         <icon height="58" platform="ios" src="www/res/icon/ios/icon-small-2x.png" width="58" />
         <icon height="87" platform="ios" src="www/res/icon/ios/icon-small-3x.png" width="87" />
-				<splash platform="ios" src="www/res/screen/ios/Default.png" width="768" height="1280"/>
+				<splash platform="ios" src="www/res/screen/ios/default.png" width="320" height="480"/>
+				<splash platform="ios" src="www/res/screen/ios/Default768.png" width="768" height="1280"/>
     </platform>
     <platform name="wp8">
         <icon height="99" platform="wp8" src="www/res/icon/wp8/ApplicationIcon.png" width="99" />

@@ -66,7 +66,15 @@ var fbLoginSuccess = function (userData) {
 	//alert(JSON.stringify(userData));
 	//alert(JSON.stringify(userData.authResponse.userID));
 	//window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_self');
-	window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
+
+	navigator.geolocation.getCurrentPosition(function onSuccess(position) {
+		alert("Got location");
+		window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID + "&loc=" + position.coords.latitude + "+" + position.coords.longitude + ",'_blank', 'location=no,toolbar=no,zoom=no');
+	},
+  function onError() {
+		alert("No location");
+		window.open("http://toutrix.com/jukenet?fbUserId=" + userData.authResponse.userID,'_blank', 'location=no,toolbar=no,zoom=no');
+	});	
 }
 
 function loginFb() {

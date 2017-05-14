@@ -8,6 +8,7 @@
         TouTrix Team
     </author>
     <content src="index.html" />
+		<splash src="splash.png" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="15" />
     <preference name="android-targetSdkVersion" value="15" />

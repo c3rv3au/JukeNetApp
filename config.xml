@@ -55,6 +55,9 @@
         <icon height="87" platform="ios" src="www/res/icon/ios/icon-small-3x.png" width="87" />
 				<splash platform="ios" src="www/res/screen/ios/default.png" width="320" height="480"/>
 				<splash platform="ios" src="www/res/screen/ios/Default768.png" width="768" height="1280"/>
+
+				<!-- iPhone 5 / iPod Touch (5th Generation) -->
+				<splash src="Default-568h@2x.png" platform="ios" width="640" height="1136" />
     </platform>
     <platform name="wp8">
         <icon height="99" platform="wp8" src="www/res/icon/wp8/ApplicationIcon.png" width="99" />

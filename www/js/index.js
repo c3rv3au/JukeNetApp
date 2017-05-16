@@ -16,6 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+var deviceId = null;
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -34,16 +37,25 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+				$("#fb_btn").on("click",function(e) {
+alert("pass");
+					loginFb();
+				});
+				$("#loginForm").on("submit",function(e) {					
+					$("#submitButton",this).attr("disabled","disabled");
+					window.open("http://toutrix.com/jukenet?deviceId=" + deviceId,'_blank', 'location=no,toolbar=no,zoom=no');
+					return false;
+				});
+
 
 				function success(uuid)
 				{
 						console.log(uuid);
-						//document.getElementById("user_html").innerHTML = uuid;
+						deviceId = uuid;
 				};
 				function fail(uuid)
 				{
 					console.log("Fail to get an uuid... " + uuid);
-					//document.getElementById("user_html").innerHTML = "Failed..";					
 				};
 				window.plugins.uniqueDeviceID.get(success, fail);
 				initFbApp();
@@ -92,10 +104,10 @@ function initFbApp() {
 		if (status.status == "connected") {
 			fbLoginSuccess(status);
 		} else {
-			loginFb();
+			//loginFb();
 		}
 	}, function() {
-		loginFb();
+		//loginFb();
 	});
 
 }

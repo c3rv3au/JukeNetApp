@@ -57,7 +57,7 @@ var app = {
 					console.log("Fail to get an uuid... " + uuid);
 				};
 				window.plugins.uniqueDeviceID.get(success, fail);
-				//initFbApp();
+				initFbApp();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {

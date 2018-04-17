@@ -1,11 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.toutrix.jukenet" version="1.2.6" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>jukenet</name>
+<widget id="com.toutrix.jukenet" version="0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>JukeNet</name>
     <description>
-        JukeNet will play music.
     </description>
-    <author email="c3rv3au@gmail.com" href="http://toutrix.com">
-        TouTrix Team
+    <author email="eric@jukenet.net" href="https://jukenet.net/">
+        JukeNet
     </author>
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
@@ -26,18 +25,6 @@
         <icon platform="android" qualifier="hdpi" src="www/res/icon/android/icon-72-hdpi.png" />
         <icon platform="android" qualifier="xhdpi" src="www/res/icon/android/icon-96-xhdpi.png" />
         <icon platform="android" qualifier="xxhdpi" src="www/res/icon/android/icon-144-xxhdpi.png" />
-        <splash density="land-ldpi" src="www/res/screen/android/drawable-land-ldpi-screen.png" />
-        <splash density="land-mdpi" src="www/res/screen/android/drawable-land-mdpi-screen.png" />
-        <splash density="land-hdpi" src="www/res/screen/android/drawable-land-hdpi-screen.png" />
-        <splash density="land-xhdpi" src="www/res/screen/android/drawable-land-xhdpi-screen.png" />
-        <splash density="land-xxhdpi" src="www/res/screen/android/drawable-land-xxhdpi-screen.png" />
-        <splash density="land-xxxhdpi" src="www/res/screen/android/drawable-land-xxxhdpi-screen.png" />
-        <splash density="port-ldpi" src="www/res/screen/android/drawable-port-ldpi-screen.png" />
-        <splash density="port-mdpi" src="www/res/screen/android/drawable-port-mdpi-screen.png" />
-        <splash density="port-hdpi" src="www/res/screen/android/drawable-port-hdpi-screen.png" />
-        <splash density="port-xhdpi" src="www/res/screen/android/drawable-port-xhdpi-screen.png" />
-        <splash density="port-xxhdpi" src="www/res/screen/android/drawable-port-xxhdpi-screen.png" />
-        <splash density="port-xxxhdpi" src="www/res/screen/android/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
         <icon height="57" platform="ios" src="www/res/icon/ios/icon.png" width="57" />
@@ -55,37 +42,17 @@
         <icon height="152" platform="ios" src="www/res/icon/ios/icon-76-2x.png" width="152" />
         <icon height="29" platform="ios" src="www/res/icon/ios/icon-small.png" width="29" />
         <icon height="58" platform="ios" src="www/res/icon/ios/icon-small-2x.png" width="58" />
-        <splash height="480" src="www/res/screen/ios/screen-iphone-portrait.png" width="320" />
-        <splash height="960" src="www/res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
-        <splash height="1136" src="www/res/screen/ios/screen-iphone-portrait-568h-2x.png" width="640" />
-        <splash height="1334" src="www/res/screen/ios/screen-iphone-portrait-667h.png" width="750" />
-        <splash height="2208" src="www/res/screen/ios/screen-iphone-portrait-736h.png" width="1242" />
-        <splash height="1024" src="www/res/screen/ios/screen-ipad-portrait.png" width="768" />
-        <splash height="2048" src="www/res/screen/ios/screen-ipad-portrait-2x.png" width="1536" />
-    </platform>
-    <platform name="wp8">
-        <icon height="99" platform="wp8" src="www/res/icon/wp8/ApplicationIcon.png" width="99" />
-        <icon height="159" platform="wp8" src="www/res/icon/wp8/Background.png" width="159" />
-        <splash height="1280" platform="wp8" src="www/res/screen/wp8/screen-portrait.jpg" width="768" />
-    </platform>
-    <platform name="windows">
-        <icon height="150" platform="windows" src="www/res/icon/windows/Square150x150Logo.scale-100.png" width="150" />
-        <icon height="30" platform="windows" src="www/res/icon/windows/Square30x30Logo.scale-100.png" width="30" />
-        <icon height="50" platform="windows" src="www/res/icon/windows/StoreLogo.scale-100.png" width="50" />
-        <splash height="300" platform="windows" src="www/res/screen/windows/SplashScreen.scale-100.png" width="620" />
-        <icon height="120" platform="windows" src="www/res/icon/windows/StoreLogo.scale-240.png" width="120" />
-        <icon height="44" platform="windows" src="www/res/icon/windows/Square44x44Logo.scale-100.png" width="44" />
-        <icon height="106" platform="windows" src="www/res/icon/windows/Square44x44Logo.scale-240.png" width="106" />
-        <icon height="70" platform="windows" src="www/res/icon/windows/Square70x70Logo.scale-100.png" width="70" />
-        <icon height="71" platform="windows" src="www/res/icon/windows/Square71x71Logo.scale-100.png" width="71" />
-        <icon height="170" platform="windows" src="www/res/icon/windows/Square71x71Logo.scale-240.png" width="170" />
-        <icon height="360" platform="windows" src="www/res/icon/windows/Square150x150Logo.scale-240.png" width="360" />
-        <icon height="310" platform="windows" src="www/res/icon/windows/Square310x310Logo.scale-100.png" width="310" />
-        <icon height="150" platform="windows" src="www/res/icon/windows/Wide310x150Logo.scale-100.png" width="310" />
-        <icon height="360" platform="windows" src="www/res/icon/windows/Wide310x150Logo.scale-240.png" width="744" />
-        <splash height="1920" platform="windows" src="www/res/screen/windows/SplashScreenPhone.scale-240.png" width="1152" />
+        <splash height="480" src="www/res/screen/ios/Default.png" width="320" />
+        <splash height="960" src="www/res/screen/ios/Default@2x.png" width="640" />
+        <splash height="1136" src="www/res/screen/ios/Default-568h@2x.png" width="640" />
+        <splash height="1334" src="www/res/screen/ios/Default-667h@2x.png" width="750" />
+        <splash height="2208" src="www/res/screen/ios/Default-Portrait-736h@3x.png" width="1242" />
+        <splash height="1024" src="www/res/screen/ios/Default-Portrait.png" width="768" />
+        <splash height="2048" src="www/res/screen/ios/Default-Portrait@2x.png" width="1536" />
     </platform>
     <access origin="*" />
+    <access origin="cdvfile://*" />
+    <allow-intent href="cdvfile://*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
@@ -99,25 +66,17 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugin-battery-status" spec="~1.1.1" />
-    <plugin name="cordova-plugin-console" spec="~1.0.2" />
-    <plugin name="cordova-plugin-device" spec="~1.1.1" />
-    <plugin name="cordova-plugin-device-motion" spec="~1.2.0" />
-    <plugin name="cordova-plugin-device-orientation" spec="~1.0.2" />
-    <plugin name="cordova-plugin-dialogs" spec="~1.2.0" />
-    <plugin name="cordova-plugin-facebook4" spec="~1.7.4">
+    <engine name="android" spec="^6.2.3" />
+    <plugin name="cordova-plugin-facebook4" spec="^1.10.1">
         <variable name="APP_ID" value="1600570720267450" />
         <variable name="APP_NAME" value="JukeNet" />
     </plugin>
     <plugin name="cordova-plugin-facebookads" spec="^4.23.2" />
-    <plugin name="cordova-plugin-file" spec="~4.1.1" />
-    <plugin name="cordova-plugin-file-transfer" spec="~1.5.0" />
-    <plugin name="cordova-plugin-geolocation" spec="~2.1.0" />
-    <plugin name="cordova-plugin-globalization" spec="~1.0.3" />
-    <plugin name="cordova-plugin-network-information" spec="~1.2.0" />
-    <plugin name="cordova-plugin-splashscreen" spec="~3.2.1" />
-    <plugin name="cordova-plugin-statusbar" spec="~2.1.2" />
-    <plugin name="cordova-plugin-uniquedeviceid" spec="https://github.com/Paldom/UniqueDeviceID.git" />
-    <plugin name="cordova-plugin-vibration" spec="~2.1.0" />
-    <plugin name="cordova-plugin-whitelist" spec="~1.2.1" />
+    <plugin name="cordova-plugin-file" spec="^4.3.3" />
+    <plugin name="cordova-plugin-geolocation" spec="^2.4.3" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="git+https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git" />
+    <plugin name="phonegap-plugin-push" spec="^2.1.2">
+        <variable name="SENDER_ID" value="226308297309" />
+    </plugin>
 </widget>

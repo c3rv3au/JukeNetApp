@@ -80,4 +80,5 @@
     <plugin name="phonegap-plugin-push" spec="^2.1.2">
         <variable name="SENDER_ID" value="226308297309" />
     </plugin>
+    <plugin name="cordova-plugin-device" spec="~1.1.1" />
 </widget>

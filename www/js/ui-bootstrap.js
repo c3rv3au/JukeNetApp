@@ -51,7 +51,11 @@ function download_css(callback) {
       console.log("download error target " + error.target);
       console.log("download error code" + error.code);
 			callback(error);
-	  }
+	  },
+		false,
+		{
+			Connection: "close"
+		}
 	);
 }
 

@@ -1,0 +1,71 @@
+{
+    "name": "jukenet",
+    "version": "0.0.0",
+    "devDependencies": {
+        "gulp": "^3.8.1",
+        "gulp-connect": "^2.0.5",
+        "gulp-ignore": "^1.2.0",
+        "gulp-rimraf": "^0.1.0",
+        "gulp-less": "^3.0.3",
+        "gulp-concat": "^2.3.4",
+        "gulp-order": "^1.1.1",
+        "gulp-uglify": "^0.3.1",
+        "run-sequence": "^0.3.6",
+        "gulp-sourcemaps": "^1.1.0",
+        "gulp-cssmin": "^0.1.6",
+        "gulp-angular-templatecache": "^1.2.1",
+        "gulp-ng-annotate": "^0.2.0",
+        "gulp-mobilizer": "^0.0.2",
+        "weinre": "^2.0.0-pre-I0Z7U9OV",
+        "gulp-replace": "^0.4.0",
+        "gulp-angular-filesort": "^1.0.1",
+        "streamqueue": "^0.1.1",
+        "gulp-rename": "^1.2.0"
+    },
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-battery-status": {},
+            "cordova-plugin-console": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-device-motion": {},
+            "cordova-plugin-device-orientation": {},
+            "cordova-plugin-dialogs": {},
+            "cordova-plugin-facebook4": {
+                "APP_ID": "1600570720267450",
+                "APP_NAME": "JukeNet"
+            },
+            "cordova-plugin-file": {},
+            "cordova-plugin-file-transfer": {},
+            "cordova-plugin-geolocation": {},
+            "cordova-plugin-globalization": {},
+            "cordova-plugin-network-information": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-uniquedeviceid": {},
+            "cordova-plugin-vibration": {},
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-facebookads": {}
+        }
+    },
+    "dependencies": {
+        "cordova-ios": "^4.5.0",
+        "cordova-plugin-battery-status": "~1.1.1",
+        "cordova-plugin-console": "~1.0.2",
+        "cordova-plugin-device": "~1.1.1",
+        "cordova-plugin-device-motion": "~1.2.0",
+        "cordova-plugin-device-orientation": "~1.0.2",
+        "cordova-plugin-dialogs": "~1.2.0",
+        "cordova-plugin-facebook4": "~1.7.4",
+        "cordova-plugin-facebookads": "^4.23.2",
+        "cordova-plugin-file": "~4.1.1",
+        "cordova-plugin-file-transfer": "~1.5.0",
+        "cordova-plugin-geolocation": "~2.1.0",
+        "cordova-plugin-globalization": "~1.0.3",
+        "cordova-plugin-network-information": "~1.2.0",
+        "cordova-plugin-splashscreen": "~3.2.1",
+        "cordova-plugin-statusbar": "~2.1.2",
+        "cordova-plugin-uniquedeviceid": "https://github.com/Paldom/UniqueDeviceID.git",
+        "cordova-plugin-vibration": "~2.1.0",
+        "cordova-plugin-whitelist": "~1.2.1"
+    }
+}

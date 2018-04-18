@@ -96,6 +96,7 @@ function load() {
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
+ setTimeout( function () {
 	console.log("Device is ready");
 	var the_dir = cordova.file.dataDirectory;
 	if (device.platform == "iOS")
@@ -118,4 +119,5 @@ function onDeviceReady() {
 			}
 		});
 	});
+ }, 5000);
 }

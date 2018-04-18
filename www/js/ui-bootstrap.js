@@ -33,7 +33,7 @@ function check(callback) {
 
 function download_css(callback) {
 	var fileTransfer = new FileTransfer();
-	var uri = encodeURI("http://toutrix.com/ui_builder/css?project=" + project_id);
+	var uri = encodeURI("https://storage.googleapis.com/ui_src/" + project_id + "/app.css");
 	var fileURL = nativePath + "app.css";
 
 	console.log("Writing app.css to: " + fileURL);

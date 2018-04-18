@@ -8,7 +8,6 @@ var filesystem;
 
 // Check if there is an update
 function check(callback) {
-	console.log("Checking for updates");
 	var manifest = JSON.parse(localStorage.getItem('ui-manifest'));
 	if (typeof manifest === "undefined" || manifest == null)
 		manifest = {version: 0}
@@ -97,10 +96,12 @@ function load() {
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
- setTimeout( function () {
 	console.log("Device is ready");
+	var the_dir = cordova.file.dataDirectory;
+	if (device.platform == "iOS")
+		the_dir = cordova.file.documentsDirectory;
 
-	window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
+	window.resolveLocalFileSystemURL(the_dir, function(dir) {
 		filesystem = dir;
 
 		nativePath = dir.toURL();
@@ -117,11 +118,4 @@ function onDeviceReady() {
 			}
 		});
 	});
- }, 5000);
- var i = 0;
- var inte = setInterval( function () {
-   console.log("Waiting");
-   i++;
-   if (i>=5) clearInterval(inte);
- }, 1000);
 }

@@ -11,7 +11,7 @@ function check(callback) {
 	var manifest = JSON.parse(localStorage.getItem('ui-manifest'));
 	if (typeof manifest === "undefined" || manifest == null)
 		manifest = {version: 0}
-
+	console.log("Checking for update...");
 	$.ajax({
 		type:     "GET",
 		url:      "http://toutrix.com/ui_builder/manifest?project=" + project_id,
@@ -27,7 +27,8 @@ function check(callback) {
 		error: function(){
 			console.log("Got an error downloading manifest.json");
 			return callback(false);
-		}
+		},
+    timeout: 10000
 	});	
 }
 

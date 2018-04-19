@@ -64,6 +64,7 @@
         <allow-intent href="market:*" />
     </platform>
     <platform name="ios" spec="^4.5.0" >
+				<resource-file src="GoogleService-Info.plist" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>

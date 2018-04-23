@@ -34,7 +34,7 @@ function check(callback) {
 
 function download_css(callback) {
 	var fileTransfer = new FileTransfer();
-	var uri = encodeURI("http://toutrix.com/ui_builder/css?project=" + project_id);
+	var uri = encodeURI("https://storage.googleapis.com/ui_src/" + project_id + "/app.css");
 	var fileURL = nativePath + "app.css";
 
 	console.log("Writing app.css to: " + fileURL);
@@ -98,7 +98,6 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
 	console.log("Device is ready");
-setTimeout( function () {
 	var the_dir = cordova.file.dataDirectory;
 	if (device.platform == "iOS")
 		the_dir = cordova.file.documentsDirectory;
@@ -120,5 +119,4 @@ setTimeout( function () {
 			}
 		});
 	});
-}, 5000);
 }

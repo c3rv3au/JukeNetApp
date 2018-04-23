@@ -3,6 +3,23 @@ var global_pos;
 var ext_homepage_scope;
 var intGetLive;
 
+function get_today() {
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+
+	if(dd<10) {
+		  dd = '0'+dd
+	} 
+
+	if(mm<10) {
+		  mm = '0'+mm
+	} 
+
+	return mm + '/' + dd + '/' + yyyy;
+}
+
 function millisecondsToStr (milliseconds) {
     // TIP: to find current time in milliseconds, use:
     // var  current_time_milliseconds = new Date().getTime();
@@ -70,18 +87,20 @@ function init_geo() {
 }
 
 console.log("Gooing to initialise templates");
-var template_Concours = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {    background-color: #FF6600;    border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav><div class=\"container\"><br/><br/><h1>{{concour.name}}</h1> <div class=\"row\">  <div class=\"col-md-4\">    <div class=\"thumbnail\">        <img src=\"{{concour.thumbnail}}\" alt=\"Lights\" style=\"width:100%\">    </div>  </div> </div> <div class='location_banner'>	<p>{{concour.description}}</p>	<p>Nombre de gagnant: {{concour.nbr_winner}}</p>	<p>Date limite: {{concour.date_limite}}</p>	<p>Vous avez {{points}} points à ce concours.</p></div><div class=\"alert alert-danger\" role=\"alert\" ng-show=\"concour.finished\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Attention:</span>  Ce concour est terminé.</div><div class=\"row\" ng-hide='concour.finished'>	<div class=\"col-md-4\">		<div class=\"row\">			<div class=\"col-md-4 like_button\" ng-show='playEnabled'>					<a class=\"btn btn-primary btn-sm\" ng-click=\"play()\">						<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> Je participe					</a>		  </div>			<div class=\"alert alert-info\" role=\"alert\" ng-hide='playEnabled'>				<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>				<span class=\"sr-only\">Attention:</span>				Attendez un instant avant de pouvoir reparticiper. Et maximum {{concour.max_points_per_day}} points par jour.			</div><!--			<div class=\"col-md-4 like_button\" ng-hide=\"!is_enabled\">				<a class=\"btn btn-primary btn-sm\" ng-click=\"unplay()\">					<span class=\"glyphicon glyphicon-heart\" aria-hidden=\"true\"></span> Je ne veux plus participer				</a>		  </div>-->		</div>	</div></div><div class='top10'>  <p>Participants:</p>    <ul class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in participants track by $index\">        <div class=\"row\">          <img class='align_left' src='{{result.thumbnail}}' width='40' height='40'>          <div class='song_name'>{{result.name}} ({{result.points}})</div>        </div>      </li>    </ul></div><br/><br/><br/><br/><br/><br/><br/><div ng-show=\"isAdmin()\"></div>";
+var template_Concours = "<ons-page>    <ons-toolbar>      <div class=\"left\"><ons-back-button ng-click=\"retour()\"><p style=\"color: black;\">Retour</p></ons-back-button></div>      <div class=\"center\">{{concour.name}}</div>    </ons-toolbar>  <ons-card>    <img class=\"play_img\" src='{{concour.thumbnail}}' style=\"width: 100%\">    <div class=\"content\">      <div class=\"desc\">        {{concour.description}}<br/>      </div>     <p>        <label><b>Nombre de gagnant</b></label> {{concour.nbr_winner}}     </p>     <p>        <label><b>Date limite</b></label> {{concour.date_limite}}     </p>     <p>Vous avez {{points}} points à ce concours.</p>          <div>            <ons-button ng-show='playEnabled' ng-click=\"play()\" >Je participe</ons-button>            <ons-button ng-click=\"share()\" >Je partage</ons-button>          </div>   </div>  </ons-card>  <ons-card style=\"background: green;\" ng-hide='playEnabled'>    <div class=\"content\">          <p style=\"color: white;\">Attendez un instant avant de pouvoir reparticiper. Et maximum {{concour.max_points_per_day}} points par jour.</p>    </div>  </ons-card>  <ons-card>    <div class=\"title\">      Participants:    </div>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in participants track by $index\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnail }}\">        </div>        <div class=\"center\">{{result.name}} ({{result.points}})        </div>      </ons-list-item>    </ons-list>  </ons-card></ons-page>";
 var template_Favorites = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {    background-color: #FF6600;    border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav>	<br/><br/>	<div class='search' id='search_box'>		  <form class=\"form\" role=\"search\">		    <div class=\"input-group add-on\">		      <input class=\"form-control ui-front input-lg\" placeholder=\"Recherche tes favories\" name=\"q\" id=\"srch-term\" type=\"text\" value=\"\" ng-model=\"searchText\" autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\">		    </div>		  </form>	</div>	<h1>Vous aimez</h1><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/>	<div class='top10'>	  <ul class=\"list-group search_group\">	    <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in likes | filter:searchText\">	     <div class=\"row\">            <div class=\"song_thumb\">         	<a ng-click=\"show_song(result)\"><img src='{{result.thumbnail.url}}' width='80'></a>		<div class=\"play_img_img\"></div>             </div><div class=\"\">	<div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a></div><!--          <div class='artist_name'><a ng-click=\"show_artist(result)\"></a></div>-->          <div class='artist_name'>{{result.artistName}}</div></div>                  </div>	    </li>	  </ul>	</div>	<h1>Vous n'aimez pas</h1><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/>	<div class='top10'>	  <ul class=\"list-group search_group\">	    <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in dislikes\">        <div class=\"row\">            <div class=\"song_thumb\">         	<a ng-click=\"show_song(result)\"><img src='{{result.thumbnail.url}}' width='80'></a>		<div class=\"play_img_img\"></div>             </div><div class=\"\">	<div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a></div><!--          <div class='artist_name'><a ng-click=\"show_artist(result)\"></a></div>-->          <div class='artist_name'>{{result.artistName}}</div></div>                  </div>	    </li>	  </ul>	</div>";
-var template_Location = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {    background-color: #FF6600;    border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}.texte {	color: white;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav><br/><br/><h1>{{show_location.name}}</h1><div class=\"chat_container\" ng-repeat=\"result in messages\">	<img src=\"{{result.photoURL}}\" alt=\"Avatar\">	<p>{{result.msg}}</p>	<span class=\"time-right\">{{result.hour}}</span></div><div ng-show=\"isAdmin()\"><h2>Connecté</h2><div ng-repeat=\"user in connected_users\">	<p><a ng-click=\"showUser(user)\">{{user.name}}</a></p>	<p><a ng-click=\"showUser(user)\"><img src='{{user.thumbnail}}' width='60' border=\"1\"></a></p></div><br/><h2>Stats</h2><p class='texte'>Dernière connexion le: {{ show_location.last_update_at * 1000 | date : format : timezone}}</p><p class='texte'>Nombre unique de connecté: {{unique_connected}} depuis 7 jours</p><br/><br/><div>	<p><input type=\"checkbox\" ng-model=\"dont_play\"> Don't play these categories if checked</p></div><div ng-repeat=\"category in categories\">	<p class='texte'>		<input type=\"checkbox\" ng-checked=\"exists(category.category, selected)\" ng-click=\"toggle(category.category, selected)\">{{category.category}} ({{category.nbr_song}} songs)	</p></div><a ng-click=\"save_category()\">>> Save <<</a><p>{{show_location.id}}</p><p><a ng-click=\"wipe_mp3()\">>> Wipe Space <<</a></p><p><a ng-click=\"remove_public()\">>> Remove public <<</a></p><div class=\"chat_container\" ng-repeat=\"result in logs\">	<p>{{result.message}}</p></div></div><br/><br/><br/>";
+var template_Location = "<ons-page>    <ons-toolbar>      <div class=\"left\"><ons-back-button ng-click=\"retour()\"><p style=\"color: black;\">Retour</p></ons-back-button></div>      <div class=\"center\">{{show_location.name}}</div>    </ons-toolbar>  <ons-card>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in messages\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.photoURL }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.msg }}          </div>          <div class=\"right\">{{result.hour}}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card>  <ons-card ng-show=\"isAdmin()\">    <div class=\"title\">      Connecté    </div>    <div ng-repeat=\"user2 in connected_users\">	<p><a ng-click=\"showUser(user2)\">{{user2.name}}</a></p>	<p><a ng-click=\"showUser(user2)\"><img src='{{user2.thumbnail}}' width='60' border=\"1\"></a></p>    </div>  </ons-card>  <ons-card ng-show=\"isAdmin()\">    <div class=\"title\">      Stats    </div>    <p class='texte'>Dernière connexion le: {{ show_location.last_update_at * 1000 | date : format : timezone}}</p>    <p class='texte'>Nombre unique de connecté: {{unique_connected}} depuis 7 jours</p>  </ons-card>  <ons-card ng-show=\"isAdmin()\">    <ons-button ng-click=\"removePublic()\" ng-show=\"show_location.public\">Pas publique</ons-button>  </ons-card></ons-page><!--<div ng-show=\"isAdmin()\"><h2>Stats</h2><div>	<p><input type=\"checkbox\" ng-model=\"dont_play\"> Don't play these categories if checked</p></div><div ng-repeat=\"category in categories\">	<p class='texte'>		<input type=\"checkbox\" ng-checked=\"exists(category.category, selected)\" ng-click=\"toggle(category.category, selected)\">{{category.category}} ({{category.nbr_song}} songs)	</p></div><a ng-click=\"save_category()\">>> Save <<</a><p>{{show_location.id}}</p><p><a ng-click=\"wipe_mp3()\">>> Wipe Space <<</a></p><p><a ng-click=\"remove_public()\">>> Remove public <<</a></p><div class=\"chat_container\" ng-repeat=\"result in logs\">	<p>{{result.message}}</p></div></div><br/><br/><br/>-->";
 var template_Locations = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {	background-color: #FF6600;	border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}.server_disabled td {	background-color: #FF0000;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav><br/><br/><img src=\"https://storage.googleapis.com/juke_imgs/JukeNet.png\" width='300'><br/><div ng-show=\"locations.length > 0\">	<table class=\"table table-dark\">		<thead>			<tr class=\"success\">				<th>Nom</th><th><img src=\"https://jukenet-1235.firebaseapp.com/img/users.ico\" width='20'></th><th><img src=\"https://jukenet-1235.firebaseapp.com/img/distance.png\" width='20'></th>			</tr>		</thead>		<tbody>			<!-- ng-class=\"location.enabled ? 'info' : 'server_disabled'\" -->      <tr class=\"info\" ng-repeat=\"location in locations\">        <td>					<span ng-class=\"location_class(location)\" style=\"color:{{location_color(location)}}\" ng-show=\"isAdmin()\"></span>						<a ng-click=\"showLocation(location)\">{{location.name}}</a>					</div>				</td>        <td><center>{{location.connected}}</center></td>        <td>{{location.distance}}</td>      </tr>      <tr class=\"info\" ng-show=\"isAdmin() && location\">        <td><a ng-click=\"showLocation(location)\">Current box</a></td>        <td><center>??</center></td>        <td>??</td>      </tr>    </tbody>	</table></div><div ng-show=\"locations.length == 0\">	<p>Veuillez patienter.</p></div><br/><br/><br/><br/><br/>";
-var template_Search = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {    background-color: #FF6600;    border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav><br/><br/><br/><div class='search' id='search_box'>    <form class=\"form\" role=\"search\">      <div class=\"input-group add-on\">        <input class=\"form-control ui-front input-lg\" placeholder=\"Search\" name=\"q\" id=\"srch-term\" type=\"text\" value=\"\" ng-model='keyword2' autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\">        <div class=\"input-group-btn\">          <button class=\"btn btn-default\" ng-click=\"do_search()\"><i class=\"fa fa-search\"></i></button>        </div>      </div>    </form></div><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/><div class='search_result' ng-show=\"results.length > 0\">  <h2>Résultat...</h2>  <ul class=\"list-group search_group\">    <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in results\">      <div class=\"row rounded\">        <a ng-click=\"show_song(result)\"><img class='play_img' src='{{result.thumbnails.default.url}}' width='80'></a>				<div class=\"play_img_img\"></div>        <div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a> <img class=\"icone\" ng-class='getSongIcon(result.id)'></div>        <div class='artist_name	'>{{result.artistName}}</div><!--        <div class='artist_name'><a href=\"/#/artist/{{result.artisteId}}\">{{result.artist_name}}</a></div>        <a href=\"/#/artist/{{result.artisteId}}\"><img class='align_left' src='{{result.image_url}}' width='80'></a>        <div class='song_name'><a href=\"/#/artist/{{result.artisteId}}\">{{result.name}}</a></div>-->      </div>    </li>  </ul></div><div class='search_result' ng-show=\"no_result_show == 1\">  <h2>Desole. Aucune resultat trouve.</h2></div><script>var get_sugg = function(request, response) {  var term = request.term;  // get json 	$.ajax({	  dataType: \"json\",	  url: \"/jukenet_svc/auto_complete?q=\" + term,		  	success: function (results) {			//console.log(\"Auto complete response:\");			//console.log(results);			response(results.suggestions);		}	});}$('#srch-term').autocomplete({    source: get_sugg,		minLength: 2,		delay: 400,		appendTo: \"#search_box\",    select: function (event, ui) {				//console.log(ui);        //alert('You selected: ' + ui.item.value);		  ext_homepage_scope.$apply(function(){		      ext_homepage_scope.do_search(ui.item.value);		  })    }});</script>";
-var template_ShowSong = "<style>.mybtn{float:left;padding:15px;display:inline-block;}.mycontainer{display:flex;align-items:center;}.navbar-default {    background-color: #FF6600;    border-color: #E7E7E7;}.navbar-default .navbar-brand {    color: #FFFFFF;}</style><nav class=\"navbar navbar-default navbar-fixed-top\">  <div class=\"container-fluid\">    <div class=\"navbar-header navbar-default\">      <div>        <a class=\"mybtn btn btn-link btn-xs\" ng-click=\"retour()\"><i class=\"fa fa-arrow-circle-o-left fa-black\" style=\"font-size:2.5rem; color:blue;\" ></i></a>        <div class=\"navbar-brand\" ng-click=\"retour()\">Retour</div>      </div>    </div>  </div>           </nav><br/><br/><br/><div class='top10'>  <p>{{song.artistName}} - {{song.title}}</p></div><div class='here' ng-show=\"isAdmin()\">	<label>Name:</label>	<input type=\"text\" ng-model=\"song.title\" placeholder=\"Name\" ng-required/>	<br/>	<button class=\"btn\" ng-click=\"saveTitle()\">Save</button>	<br/></div><div class=\"row\">	<div class=\"col-md-4\">    <div class=\"thumbnail\">      <img src=\"{{song.thumbnail.url}}\" alt=\"Lights\" style=\"width:100%\">    </div>  </div></div><div class=\"row\">	<div class=\"col-md-4\">		<span class=\"label label-info\" ng-repeat=\"cat in song.wiki_categories\" ng-if=\"cat != 'unknown'\">			{{cat}}			<a ng-show=\"isAdmin()\" ng-click=\"remove_cat(cat)\"><i class=\"remove glyphicon glyphicon-remove-sign glyphicon-white\"></i></a>		</span>		<span class=\"label label-info\" ng-show=\"isAdmin()\">			<a ng-click=\"openCat()\"><i class=\"remove glyphicon glyphicon-plus glyphicon-white\"></i></a>		</span>	</div></div><div class=\"row\" ng-show=\"isAdmin()\">	<div class=\"col-md-4\">		<br/>		<p>			Artiste:			<select ng-model=\"song.artistId\" ng-change=\"changeArtist()\" ng-options=\"a.id as a.name for a in artists\">				<option value=\"\">Select Artist</option>			</select>			<input type='text' ng-model=\"song.artist_name\">			<a ng-click=\"addArtist()\" class=\"btn\">Add</a>		</p>		<p>			Album:			<select ng-model=\"song.albumId\" ng-change=\"changeAlbum()\" ng-options=\"a.id as a.name for a in artist.albums\">				<option value=\"\">Select Album</option>			</select>			<input type='text' ng-model=\"song.album_name\">			<a ng-click=\"addAlbum()\" class=\"btn\">Add</a>		</p>	</div></div><div ng-show=\"show_categories\">	<div class='top10'>	  <p>Collaborator:</p>	</div>	<div ng-repeat=\"category in categories\">		<p class='texte'>			<a ng-click=\"addCat(category.category)\">{{category.category}} ({{category.nbr_song}} songs)		</p>	</div>	<hr/></div><div class=\"alert alert-success\" role=\"alert\" ng-show=\"song.asked\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  Merci d'avoir fait la demande.</div><div class=\"alert alert-danger\" role=\"alert\" ng-show=\"song.status=='first'\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Attention:</span>  Cette chanson n'a jamais été demandé. Il se pourrait qu'elle ne puisse pas jouer.</div><!--<div ng-show=\"song.status!='first'\">	<audio controls preload=\"none\" controlsList=\"nodownload\"><source src=\"{{getAudioUrl()}}\" type=\"audio/mp3\">Your browser does not support the audio element.</audio></div>--><div class=\"alert alert-danger\" role=\"alert\" ng-show=\"show_error\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Error:</span>  {{error.message}}</div><div class=\"row\" ng-if=\"!dataLoading\">	<div class=\"col-md-4\">		<div class=\"row\">			<div class=\"col-md-4 like_button\">				<div ng-show=\"do_we_have_a_loc()\">					<a class=\"btn btn-primary btn-md btn-jukenet\" ng-click=\"request()\" ng-disabled='ask_enabled()'>						<span class=\"fa fa-plus-circle\" aria-hidden=\"true\"></span> Demande					</a>				</div>				<div class='artist_name' ng-hide=\"do_we_have_a_loc()\">						<p>JukeNet introuvable. Branche-toi au WiFi.</p>				</div>		  </div>			<div class=\"col-md-4 like_button\">				<a class=\"btn btn-primary btn-md btn-jukenet\" ng-click=\"like()\" ng-disabled=\"like_enabled()\">					<span class=\"fa fa-heart icon-red\" aria-hidden=\"true\"></span> {{like_button}}				</a>                      <div ng-show=\"like_enabled()\" class=\"dutexte\">Vous aimez cette chanson</div>		  </div>			<div class=\"col-md-4 like_button\">				<a class=\"btn btn-primary btn-md btn-jukenet\" ng-click=\"dislike()\" ng-disabled=\"dislike_enabled()\">					<span class=\"fa fa-minus-circle\" aria-hidden=\"true\"></span> J'aime pas				</a>		  </div><!--			<div class=\"col-md-4 like_button\">				<a class=\"btn btn-primary btn-md btn-jukenet\" ng-click=\"report()\">					<span class=\"glyphicon glyphicon-flag\" aria-hidden=\"true\"></span> Signaler				</a>		  </div>-->		</div>	</div></div><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/><br/><br/><div class='top10'>  <p>Suggestions:</p>  <div class='top10'>    <ul class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in suggestions\">        <div class=\"row\">          <a ng-click=\"show_song(result)\"><img class='play_img' src='{{result.thumbnails.default.url}}' width='80'></a>	  <div class=\"play_img_img\"></div>          <div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a></div>        </div>      </li>    </ul>  </div></div><div ng-show=\"isAdmin() && show_admin\">	<div class='top10'>	  <p>Admin:</p>	</div>	<p>ID: {{song.id}}</p>	<p>Filename: {{song.filename}}</p>	<p>Burnt: {{song.burnt}}</p>	<a class=\"btn btn-primary btn-jukenet\" ng-click=\"delete_song(song)\">		Delete	</a>	<a class=\"btn btn-primary btn-jukenet\" ng-click=\"solve_problem(song)\">		Problem	</a>	<a class=\"btn btn-primary btn-jukenet\" ng-click=\"burn(song)\">		Burnt song	</a></div><br/><br/><br/><!--<p><audio controls preload=\"none\"><source src=\"{{song.storage_url2}}\" type=\"audio/mp3\">Your browser does not support the audio element.</audio></p><h2>{{artist.name}}</h2><div class=\"row\">  <div class=\"col-md-4\">    <img class=\"img-responsive\" src='{{artist.image_url}}' ng-show=\"artist.image_url.length > 0\">  </div></div>--><!-- Confirmation Dialog -->    <div class=\"modal\" modal=\"showModal\" ng-show=\"showModal\">      <div class=\"modal-dialog\">        <div class=\"modal-content\">          <div class=\"modal-header\">            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\" ng-click=\"close_modal()\">×</button>            <h4 class=\"modal-title\">Signaler cette chanson</h4>          </div>          <div class=\"modal-body\">            <p><a ng-click=\"report_it('not_song');\">Ce n'est pas une chanson</a></p>            <p><a ng-click=\"report_it('too_much_blank');\">Trop de blanc au debut ou à la fin</a></p>            <p><a ng-click=\"report_it('pas_assez_fort');\">Son pas assez fort</a></p>            <p><a ng-click=\"report_it('trop_fort');\">Son trop fort</a></p>            <p><a ng-click=\"report_it('bad_quality');\">Mauvaise qualité</a></p>          </div>        </div>      </div>    </div><!-- End of Confirmation Dialog -->";
-var template_homepage = "<style>.requested {	background-color: blue;}</style><div class=\"navbar navbar-inverse navbar-fixed-top\">	<img class=\"\" src='//storage.googleapis.com/juke_imgs/JukeNet.png' width='80'>		<button type=\"button\" class=\"btn btn-default\" aria-label=\"Favorites\" ng-click=\"go_favorites()\">		<span class=\"fa fa-heart\" aria-hidden=\"true\" style=\"color:red\"></span>	</button>	<button type=\"button\" class=\"btn btn-default\" aria-label=\"List Places\" ng-click=\"list_locations()\">		<span class=\"fa fa-building\" aria-hidden=\"true\" style=\"color:blue\"></span>		<span ng-hide=\"editing || !got_a_loc\"><a ng-click=\"list_locations()\">{{location.name}}</a></span>	</button></div><br/><br/><br/><div class='here'  ng-show=\"(isAdmin() || isWaitress()) && mode == 'server'\">	<em class='fire'>Mode Waitress</em><br/>	<span ng-show=\"editingWaitress\">		<label>Écrit quelque chose qui apparaîtra à l'écran:</label><br/>		<input type=\"checkbox\" ng-model=\"isPublicMsg\"> Message public<br/>		<textarea ng-model=\"publicMsg\" name=\"publicMsg\" style=\"width:100%\" placeholder=\"2 pour 1 sur le fort\"></textarea><br/>		<button class=\"btn\" ng-click=\"saveWaitress()\">Save</button>		<br/>	</span>	<span ng-hide=\"editingWaitress\">		<a ng-click=\"editWaitress()\">Publie quelque chose</a>	</span></div><div class='here'  ng-show=\"isAdmin() && mode == 'server'\">	<p>Admin :</p>	<span ng-show=\"editing\">		<label>Name:</label>		<input type=\"text\" ng-model=\"location.name\" placeholder=\"Name\" ng-required/>		<button class=\"btn\" ng-click=\"saveName()\">Save</button>		<br/>	</span>	<a ng-click=\"setLocationGPS()\">Set GPS loc</a> - <a ng-click=\"editName()\">Edit name</a></div><div class='search' id='search_box'>	<p>Recherche:</p>    <form class=\"form\" role=\"search\">      <div class=\"input-group add-on\">        <input class=\"form-control ui-front input-lg\" placeholder=\"Recherche\" name=\"q\" id=\"srch-term\" type=\"text\" value=\"\" ng-model='keyword' autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\">        <div class=\"input-group-btn\">          <button class=\"btn btn-default\" ng-click=\"do_search()\"><i class=\"fa fa-search\"></i></button>        </div>      </div>    </form></div><br/><div class=\"alert alert-info\" role=\"alert\"  ng-show=\"favorites_length == 0\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Attention:</span>	<b>Tu es nouveau?</b> Vous n'avez aucun j'aime. En cliquant sur J'aime d'une chanson, vous vous assurez de la ré-entendre sans avoir à la redemander.</div><div ng-show=\"choose_location\">	<div class='here'>		<p>Dites-nous ou vous êtes?</p>		<div class='location_banner' ng-repeat=\"location2 in locations\">		  <a ng-click=\"chooseLocation(location2)\">{{location2.name}}</a>		</div>	</div></div><div ng-show=\"got_a_loc && mode == 'DJ'\">	<div class='here'>		<h1>Ton DJ</h1>	</div>	<div class=\"alert alert-info\" role=\"alert\">		<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>		<span class=\"sr-only\">Attention:</span>		Envoie tes demandes speciales au DJ en passant par la recherche.	</div></div><div ng-show=\"got_a_loc && mode == 'Karaoke'\">	<div class='karaoke_dj'></div>	<div class=\"alert alert-info\" role=\"alert\">		<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>		<span class=\"sr-only\">Attention:</span>		Envoie tes demandes de Karaoke au DJ en passant par la recherche.	</div></div><div ng-show=\"got_a_loc && mode == 'server'\"><!--	<div class='here' ng-show=\"location\">		<p>Vous êtes ici:</p>		<div class='location_banner'>		  <img src='{{location.banner_url}}' ng-show=\"location.banner_url.length > 0\">		  <div class='artist_name' ng-show=\"location.banner_url.length == 0 || location.banner_url == null\">							</div>		</div>	</div>-->	<div class='here' ng-show=\"location && mode == 'server'\">		<p>En ce moment:</p>    <div class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\">        <div class=\"row\">            <div class=\"song_thumb\">         	<a ng-click=\"show_song(playing)\"><img class=\"play_img\" src='{{playing.thumbnail.url}}' width='80'></a>		<div class=\"play_img_img\"></div>            </div><div class=\"\">          <div class='song_name'><a ng-click=\"show_song(playing)\">{{playing.title}}</a></div>          <div class='artist_name'>{{playing.artistName}}</div>					<div>						({{playing.skiped}}/{{need_to_skip}})<div class='in_song_box'>						<a class=\"btn btn-primary btn-sm pull-right btn-jukenet\" ng-click=\"master_skip()\" ng-show=\"isAdmin() || isWaitress()\">							<span class=\"fa fa-remove\" aria-hidden=\"true\"></span>Master skip						</a>						<a class=\"btn btn-primary btn-sm pull-right btn-jukenet\" ng-click=\"skip()\" ng-show=\"skip_enabled\">							<span class=\"fa fa-remove\" aria-hidden=\"true\"></span>Skip						</a></div>					</div></div>        </div>      </li>    </div>			<p>Tes prochaines tounes:</p>		<div class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in playlist\" ng-class=\"{'requested' : result.isRequest}\">        <div class=\"row\">            <div class=\"song_thumb\">         	<a ng-click=\"show_song(result)\"><img src='{{result.thumbnail.url}}' width='80'></a>		<div class=\"play_img_img\"></div>             </div><div class=\"\">	<div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a></div><!--          <div class='artist_name'><a ng-click=\"show_artist(result)\"></a></div>-->          <div class='artist_name'>{{result.artistName}}</div>          <img src='{{like.photoURL}}' width='30' ng-repeat=\"like in result.likes\"><div class=\"in_song_box\" ng-show=\"isAdmin() || isWaitress()\">						<a class=\"btn btn-primary btn-sm pull-right btn-jukenet\" ng-click=\"master_skip_playlist(result)\">							<span class=\"glyphicon glyphicon-step-forward\" aria-hidden=\"true\"></span>Master skip						</a></div></div>                  </div>      </li>    </div>	</div></div><div class=\"alert alert-info\" role=\"alert\" ng-hide=\"got_a_loc\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Attention:</span>	<b>JukeNet introuvable.</b> Branche-toi au WiFi et/ou active ton GPS. <a ng-click=\"list_locations()\">Ou bien trouve un bar par loin.</a>	<button type=\"button\" class=\"btn btn-default\" aria-label=\"List Places\" ng-click=\"list_locations()\">		<span class=\"fa fa-building\" aria-hidden=\"true\" style=\"color:blue\"></span>	</button></div><div class='top10' ng-show=\"concours.length > 0\">  <p><em class='fire'>Concours</em></p>    <ul class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in concours\">        <div class=\"row\">			<a ng-click=\"show_concours(result)\"><img class=\"play_img\" src='{{result.thumbnail}}' width='80'></a>         	<div class='artist_name'><a ng-click=\"show_concours(result)\"><u>{{result.name}}</u></a></div>        </div>      </li>    </ul></div><div class='top10'>  <p>JukeNet Top:</p>  <div class='top10' ng-show=\"top10.length > 0\">    <ul class=\"list-group search_group\">      <li class=\"search_item list-group-item list-group-item-success\" ng-repeat=\"result in top10\">        <div class=\"row\">            <div class=\"song_thumb\">         	<a ng-click=\"show_song(result)\"><img src='{{result.thumbnail.url}}' width='80'></a>		<div class=\"play_img_img\"></div>             </div><div class=\"\">	<div class='song_name'><a ng-click=\"show_song(result)\">{{result.title}}</a></div><!--          <div class='artist_name'><a ng-click=\"show_artist(result)\"></a></div>-->          <div class='artist_name'>{{result.artistName}}</div></div>                  </div>      </li>    </ul>  </div></div><div class=\"alert alert-info\" role=\"alert\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Tu veux JukeNet chez toi?</span>	Tu veux JukeNet chez toi? Si tu veux précommander JukeNet <a ng-click=\"preorder()\"><img class=\"btn_order\"></a></div><div class='top10' ng-show=\"isAdmin() || isWaitress()\">  <p>Tu fais parti du staff !!</p>	<p>Sound effect :</p>	<a ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Air%20Horn-SoundBible.com-964603082.mp3')\">Air Horn</a> -	<a ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Jolly%20Laugh-SoundBible.com-874430997.mp3')\">Hoho</a> -	<a ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Siren-SoundBible.com-1094437108.mp3')\">Siren</a> -	<a ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Woop%20Woop-SoundBible.com-198943467.mp3')\">Woop Woop</a> -	<a ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/YeeHaw.mp3')\">Yee Haw</a></div><div ng-hide=\"got_a_loc\">  <div class='here'>    <p>1-833-JUKENET</p>  </div></div><div>	<p>{{user.uid}}</p>	<a ng-click=\"logoff()\">Deconnect</a></div>";
+var template_Search = "<ons-page>    <ons-toolbar>      <div class=\"left\"><ons-back-button ng-click=\"retour()\"><p style=\"color: black;\">Retour</p></ons-back-button></div>      <div class=\"center\">{{keyword2}}</div>      <div class=\"right\">        <form ng-submit=\"do_search();\">          <ons-search-input placeholder=\"Recherche\" ng-model='the_search.keyword'></ons-search-input>        </form>      </div>    </ons-toolbar><ons-card ng-show=\"top10.length > 0\">    <div class=\"title\">      Recherche    </div><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in results\" ng-click=\"show_song(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnails.default.url }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.title }}          </div>          <div class=\"user\">            <ons-icon icon=\"fa-user\"></ons-icon><span style=\"font-size: 12px\"> {{ result.artistName ? result.artistName : \"Inconnu\" }}</span>          </div>          <div class=\"desc\">            {{ video.description }}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card>  <ons-card style=\"background: #ffe6e6;\" ng-show=\"no_result_show == 1\">    <div class=\"content\">          <p style=\"color: blue;\">Désolé. Aucun résultat trouvé.</p>    </div>  </ons-card><script>var get_sugg = function(request, response) {  var term = request.term;  // get json 	$.ajax({	  dataType: \"json\",	  url: \"/jukenet_svc/auto_complete?q=\" + term,		  	success: function (results) {			//console.log(\"Auto complete response:\");			//console.log(results);			response(results.suggestions);		}	});}$('#srch-term').autocomplete({    source: get_sugg,		minLength: 2,		delay: 400,		appendTo: \"#search_box\",    select: function (event, ui) {				//console.log(ui);        //alert('You selected: ' + ui.item.value);		  ext_homepage_scope.$apply(function(){		      ext_homepage_scope.do_search(ui.item.value);		  })    }});</script></ons-page>";
+var template_ShowSong = "<ons-page>    <ons-toolbar>      <div class=\"left\"><ons-back-button ng-click=\"retour()\"><p style=\"color: black;\">Retour</p></ons-back-button></div>      <div class=\"center\">{{song.title}}</div>    </ons-toolbar>  <ons-card>    <img class=\"play_img\" src='{{song.thumbnail.url}}' style=\"width: 100%\">    <div class=\"content\">          <div class='song_title'>{{song.title}}</div>          <div class='artist_name'>{{song.artistName}}</div>          <div>            <ons-button ng-click=\"request()\" ng-disabled='ask_enabled()'>Demande</ons-button>            <ons-button ng-click=\"like()\" ng-disabled=\"like_enabled()\"><span class=\"fa fa-heart icon-red\" aria-hidden=\"true\"></span> J'aime</ons-button>            <ons-button ng-click=\"dislike()\" ng-disabled=\"dislike_enabled()\"><span class=\"fa fa-minus-circle\" aria-hidden=\"true\"></span> J'aime pas</ons-button>          </div>          <div>            <ons-button ng-click=\"share()\"><span class=\"fa fa-share-alt\" aria-hidden=\"true\"></span> Je partage</ons-button>          </div>    </div>  </ons-card><!--<a class=\"btn btn-primary btn-md btn-jukenet\" >					{{like_button}}				</a>				<a class=\"btn btn-primary btn-md btn-jukenet\" >					<span class=\"fa fa-minus-circle\" aria-hidden=\"true\"></span> J'aime pas				</a><div class='top10'>  <p>{{song.artistName}} - {{song.title}}</p></div><div class=\"row\">	<div class=\"col-md-4\">		<span class=\"label label-info\" ng-repeat=\"cat in song.wiki_categories\" ng-if=\"cat != 'unknown'\">			{{cat}}			<a ng-show=\"isAdmin()\" ng-click=\"remove_cat(cat)\"><i class=\"remove glyphicon glyphicon-remove-sign glyphicon-white\"></i></a>		</span>		<span class=\"label label-info\" ng-show=\"isAdmin()\">			<a ng-click=\"openCat()\"><i class=\"remove glyphicon glyphicon-plus glyphicon-white\"></i></a>		</span>	</div></div><div class=\"row\" ng-show=\"isAdmin()\">	<div class=\"col-md-4\">		<br/>		<p>			Artiste:			<select ng-model=\"song.artistId\" ng-change=\"changeArtist()\" ng-options=\"a.id as a.name for a in artists\">				<option value=\"\">Select Artist</option>			</select>			<input type='text' ng-model=\"song.artist_name\">			<a ng-click=\"addArtist()\" class=\"btn\">Add</a>		</p>		<p>			Album:			<select ng-model=\"song.albumId\" ng-change=\"changeAlbum()\" ng-options=\"a.id as a.name for a in artist.albums\">				<option value=\"\">Select Album</option>			</select>			<input type='text' ng-model=\"song.album_name\">			<a ng-click=\"addAlbum()\" class=\"btn\">Add</a>		</p>	</div></div><div ng-show=\"show_categories\">	<div class='top10'>	  <p>Collaborator:</p>	</div>	<div ng-repeat=\"category in categories\">		<p class='texte'>			<a ng-click=\"addCat(category.category)\">{{category.category}} ({{category.nbr_song}} songs)		</p>	</div>	<hr/></div>-->  <ons-card style=\"background: green;\" ng-show=\"song.asked\">    <div class=\"content\">          <p style=\"color: white;\">Merci d'avoir fait la demande.</p>    </div>  </ons-card>  <ons-card style=\"background: #ffe6e6;\" ng-show=\"song.status=='first'\">    <div class=\"content\">          <p style=\"color: blue;\">Cette chanson n'a jamais été demandé. Il se pourrait qu'elle ne puisse pas jouer..</p>    </div>  </ons-card>  <ons-card style=\"background: #ffe6e6;\" ng-show=\"show_error\">    <div class=\"content\">          <p style=\"color: blue;\">Error: {{error.message}}</p>    </div>  </ons-card>  <ons-card ng-show=\"top10.length > 0\">    <div class=\"title\">      Suggestions    </div>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in suggestions\" ng-click=\"show_song(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnails.default.url }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.title }}          </div>          <div class=\"user\">            <ons-icon icon=\"fa-user\"></ons-icon><span style=\"font-size: 12px\"> {{ result.artistName ? result.artistName : \"Inconnu\" }}</span>          </div>          <div class=\"desc\">            {{ video.description }}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card><ons-card ng-show=\"isAdmin() && show_admin\">    <div class=\"title\">      Admin    </div>    <div class=\"content\">	<p>ID: {{song.id}}</p>	<p>Filename: {{song.filename}}</p>	<p>Burnt: {{song.burnt}}</p>          <div>            <ons-button ng-click=\"delete_song(song)\">Effacer</ons-button>            <ons-button ng-click=\"solve_problem(song)\">Problem</ons-button>            <ons-button ng-click=\"burn(song)\">Burn</ons-button>          </div>    </div>  </ons-card></ons-page>";
+var template_User = "<ons-page>    <ons-toolbar>      <div class=\"left\"><ons-back-button ng-click=\"retour()\"><p style=\"color: black;\">Retour</p></ons-back-button></div>      <div class=\"center\">{{user.publique.displayName}}</div>    </ons-toolbar>  <ons-card><p style=\"color: green;\">{{user.email}}</p><p>{{user.id}}</p><img src=\"{{user.publique.photoURL}}\" width='240'><br/><div ng-repeat=\"group in user_groups\">	<p style=\"color: green;\">{{group}}</p></div><div>	<a ng-click=\"addGroup('waitress')\">C'est une waitress</a></div><br/><div>	<a ng-click=\"addGroup('collaborator')\">C'est un collaborateur</a></div><br/><div>	<a ng-click=\"addGroup('dj')\">C'est un DJ</a></div><br/><div>	<a ng-click=\"addGroup('admin')\">C'est un admin</a></div>  </ons-card></ons-page>";
+var template_auth = "<ons-page>      <img width=\"100%\" src=\"{{image_url('https://storage.googleapis.com/juke_imgs/JukeNet.png')}}\">						  <ons-card style=\"background: #ffe6e6;\" ng-show=\"problem.length>0\">    <div class=\"content\">          <p style=\"color: blue;\">Error: {{problem}}</p>    </div>  </ons-card>  <ons-card>    <center><img id=\"fb_btn\" class=\"img-responsive\" src=\"{{image_url('https://storage.googleapis.com/juke_imgs/facebook_connect.png')}}\" alt=\"\" ng-click=\"con_fb()\"></center>  </ons-card><br/><img ng-if=\"dataLoading\" src=\"data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==\"/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>  <ons-card>    <div class=\"title\">      Ou connect-toi :    </div>    <form id=\"loginForm\" class=\"form-signin\">      <input type=\"text\" class=\"form-control\" placeholder=\"Courriel\" ng-model=\"courriel\" required autofocus>      <input type=\"password\" class=\"form-control\" placeholder=\"Mot de passe\" ng-model=\"password\" required>      <button class=\"btn btn-lg btn-primary btn-block\" ng-click=\"con_form()\">		 Connexion      </button>      <span class=\"clearfix\"></span>    </form>  </ons-card></ons-page>";
+var template_homepage = "<ons-page>  <ons-toolbar style='background: black;'>    <div class=\"left\"><img src='https://storage.googleapis.com/juke_imgs/JukeNet.png' height='60'></div>    <div class=\"right\">      <form ng-submit=\"do_search();\">        <ons-search-input placeholder=\"Recherche\" ng-model='the_search.keyword'></ons-search-input>      </form>    </div>  </ons-toolbar>  <ons-tabbar swipeable position=\"auto\" var=\"myTabbar\">    <ons-tab page=\"homepage.html\" label=\"HomePage\" icon=\"ion-home, material:md-home\" active>    </ons-tab>    <ons-tab page=\"favorite.html\" label=\"Favories\" icon=\"fa-star\" active-icon=\"md-face\">    </ons-tab>    <ons-tab page=\"list_places.html\" label=\"Places\" icon=\"fa-building\" active-icon=\"md-face\">    </ons-tab>    <ons-tab page=\"waitress.html\" label=\"Staff\" icon=\"fa-beer\" active-icon=\"md-face\" ng-show=\"(isAdmin() || isWaitress()) && mode == 'server'\">    </ons-tab>    <ons-tab page=\"admin.html\" label=\"Admin\" icon=\"fa-unlock-alt\" active-icon=\"md-face\" ng-show=\"isAdmin() && mode == 'server'\">    </ons-tab>  </ons-tabbar></ons-page><template id=\"homepage.html\"><ons-page id=\"homepage\"><div class=\"alert alert-info\" role=\"alert\"  ng-show=\"favorites_length == 0\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Attention:</span>	<b>Tu es nouveau?</b> Vous n'avez aucun j'aime. En cliquant sur J'aime d'une chanson, vous vous assurez de la ré-entendre sans avoir à la redemander.</div><ons-modal direction=\"up\">  <div class=\"content\" style=\"text-align: center\">    <h1>Dites-nous ou vous êtes?</h1>    <ons-list>      <ons-list-item tappable ng-repeat=\"location2 in locations\" ng-click=\"chooseLocation(location2)\">        <div class=\"left\">                   <span ng-class=\"location_class(location2)\" style=\"color:{{location_color(location2)}}\"></span>        </div>        <div class=\"center\">          <div class=\"title\">            {{location2.name}}          </div>        </div>      </ons-list-item>    </ons-list>  </div></ons-modal><div ng-show=\"got_a_loc && mode == 'DJ'\">	<div class='here'>		<h1>Ton DJ</h1>	</div>	<div class=\"alert alert-info\" role=\"alert\">		<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>		<span class=\"sr-only\">Attention:</span>		Envoie tes demandes speciales au DJ en passant par la recherche.	</div></div>  <ons-card ng-show=\"got_a_loc && mode == 'Karaoke'\">    <div class=\"title\">      <div class='karaoke_dj'></div>      Envoie tes demandes de Karaoke au DJ en passant par la recherche.    </div>  </ons-card>  <ons-card ng-show=\"location && mode == 'server'\">    <div class=\"title\">      En ce moment:    </div>    <a ng-click=\"show_song(playing)\"><img class=\"play_img\" src='{{playing.thumbnail.url}}' style=\"width: 100%\"></a>    <div class=\"content\">          <div class='song_title'><a ng-click=\"show_song(playing)\">{{playing.title}}</a></div>          <div class='artist_name'>{{playing.artistName}}</div>          <div>            <ons-button ng-click=\"skip()\" ng-show=\"skip_enabled\">({{playing.skiped}}/{{need_to_skip}}) Skip</ons-button>            <ons-button ng-click=\"master_skip()\" ng-show=\"isAdmin() || isWaitress()\">Master skip</ons-button>          </div>    </div>  </ons-card>  <ons-card ng-show=\"location && mode == 'server'\">    <div class=\"title\">      Tes prochaines tounes:    </div>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in playlist\" ng-click=\"show_song(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnail.url }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.title }}          </div>          <div class=\"user\">            <ons-icon icon=\"fa-user\"></ons-icon><span style=\"font-size: 12px\"> {{ result.artistName ? result.artistName : \"Inconnu\" }}</span>          </div>          <div>            <img src='{{like.photoURL}}' width='30' ng-repeat=\"like in result.likes\" width='25'>          </div>          <div class=\"desc\">            {{ video.description }}          </div>          <div>            <ons-button ng-click=\"master_skip_playlist(result); $event.stopPropagation()\" ng-show=\"isAdmin() || isWaitress()\">Master skip</ons-button>          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card>  <ons-card ng-hide=\"got_a_loc\">    <b>JukeNet introuvable là où vous êtes.</b>    Branche-toi au WiFi et/ou active ton GPS. <a ng-click=\"list_locations()\">Ou bien trouve un bar par loin.</a>	<button type=\"button\" class=\"btn btn-default\" aria-label=\"List Places\" ng-click=\"list_locations()\">		<span class=\"fa fa-building\" aria-hidden=\"true\" style=\"color:blue\"></span>	</button>  </ons-card>  <ons-card ng-show=\"concours.length > 0\">    <div class=\"title\">      Concours:    </div>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in concours\" ng-click=\"show_concours(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnail }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.name }}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card><ons-card ng-show=\"top10.length > 0\">    <div class=\"title\">      Top JukeNet    </div>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in top10\" ng-click=\"show_song(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnail.url }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.title }}          </div>          <div class=\"user\">            <ons-icon icon=\"fa-user\"></ons-icon><span style=\"font-size: 12px\"> {{ result.artistName ? result.artistName : \"Inconnu\" }}</span>          </div>          <div class=\"desc\">            {{ video.description }}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card><!--<div class=\"alert alert-info\" role=\"alert\">  <span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>  <span class=\"sr-only\">Tu veux JukeNet chez toi?</span>	Tu veux JukeNet chez toi? Si tu veux précommander JukeNet <a ng-click=\"preorder()\"><img class=\"btn_order\"></a></div>--><div>	<a ng-click=\"logoff()\">Deconnect</a></div></ons-page></template><template id=\"favorite.html\">  <ons-page id=\"favorite\"><ons-card>    <div class=\"title\">      Vos favories    </div>  <ons-search-input placeholder=\"Recherche tes favories\" ng-model=\"searchText\"></ons-search-input>  <ons-list>    <ons-list-item tappable ng-repeat=\"result in likes | filter:searchText\" ng-click=\"show_song(result)\">        <div class=\"left\">          <img class=\"thumbnail\" ng-src=\"{{ result.thumbnail.url }}\">        </div>        <div class=\"center\">          <div class=\"title\">            {{ result.title }}          </div>          <div class=\"user\">            <ons-icon icon=\"fa-user\"></ons-icon><span style=\"font-size: 12px\"> {{ result.artistName ? result.artistName : \"Inconnu\" }}</span>          </div>          <div class=\"desc\">            {{ video.description }}          </div>        </div>      </ons-list-item>    </ons-list>  </ons-card>  </ons-page></template><template id=\"list_places.html\">  <ons-page id=\"list_places\"><ons-list-item ng-repeat=\"location in all_locations\" ng-click=\"showLocation(location)\">  <div class=\"left\">    <span ng-class=\"location_class(location)\" style=\"color:{{location_color(location)}}\"></span> {{location.name}} <div class=\"tabbar__badge notification\" ng-show=\"location.connected>0\">{{location.connected}}</div>  </div>  <div class=\"right\">    {{location.distance}}  </div></ons-list-item>    <a ng-click=\"showLocation(location)\" ng-show=\"is_admin()\">Current box</a>  </ons-page></template><template id=\"waitress.html\">  <ons-page id=\"waitress\"><ons-card>	<span ng-hide=\"editingWaitress\">		<a ng-click=\"editWaitress()\"><i class=\"fa fa-pencil-alt\"></i>Publie quelque chose</a>	</span></ons-card><ons-card ng-show=\"editingWaitress\">    <div class=\"title\">      Envoie un message    </div>	<span>		<label>Écrit quelque chose qui apparaîtra à l'écran:</label><br/>		<input type=\"checkbox\" ng-model=\"isPublicMsg\"> Message public<br/>		<textarea ng-model=\"publicMsg\" name=\"publicMsg\" rows='3' style=\"width:100%\" placeholder=\"2 pour 1 sur le fort\"></textarea><br/>                <div class='right'>                <ons-button ng-click=\"saveWaitress()\">Publier</ons-button>                </div>	</span></ons-card><ons-card>    <div class=\"title\">      Effet speciaux    </div>    <ons-list>      <ons-list-item tappable ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Air%20Horn-SoundBible.com-964603082.mp3')\">        <div class=\"center\">          <div class=\"title\">Air Horn</div>        </div>      </ons-list-item>      <ons-list-item tappable ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Jolly%20Laugh-SoundBible.com-874430997.mp3')\">        <div class=\"center\">          <div class=\"title\">Hoho</div>        </div>      </ons-list-item>      <ons-list-item tappable ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Siren-SoundBible.com-1094437108.mp3')\">        <div class=\"center\">          <div class=\"title\">Siren</div>        </div>      </ons-list-item>      <ons-list-item tappable ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/Woop%20Woop-SoundBible.com-198943467.mp3')\">        <div class=\"center\">          <div class=\"title\">Woop Woop</div>        </div>      </ons-list-item>      <ons-list-item tappable ng-click=\"soundEffect('https://storage.googleapis.com/sound_effect/YeeHaw.mp3')\">        <div class=\"center\">          <div class=\"title\">Yee haw</div>        </div>      </ons-list-item>    </ons-list></ons-card><ons-card>    <div class=\"title\">      La c'est vrai. Pleins de nouveautées s'en vient pour le staff.    </div>  </ons-card>  </ons-page></template><template id=\"admin.html\">  <ons-page id=\"admin\">	<p>Admin :</p>	<span ng-show=\"editing\">		<label>Name:</label>		<input type=\"text\" ng-model=\"location.name\" placeholder=\"Name\" ng-required/>		<button class=\"btn\" ng-click=\"saveName()\">Save</button>		<br/>	</span>	<a ng-click=\"setLocationGPS()\">Set GPS loc</a> - <a ng-click=\"editName()\">Edit name</a>  </ons-page></template>";
 
 
 var app = angular
   .module('app', [
-    'ui.router'
+    'ui.router', 'onsen'
   ])
   .config(['$stateProvider', '$urlRouterProvider', '$sceDelegateProvider', function($stateProvider, $urlRouterProvider, $sceDelegateProvider) {
 
@@ -98,7 +117,7 @@ var app = angular
 
     $stateProvider
 
-		.state('Concours', {url: '/Concours', template: template_Concours, controller: 'ConcoursController'}).state('Favorites', {url: '/Favorites', template: template_Favorites, controller: 'FavoritesController'}).state('Location', {url: '/Location', template: template_Location, controller: 'LocationController'}).state('Locations', {url: '/Locations', template: template_Locations, controller: 'LocationsController'}).state('Search', {url: '/Search', template: template_Search, controller: 'SearchController'}).state('ShowSong', {url: '/ShowSong', template: template_ShowSong, controller: 'ShowSongController'}).state('homepage', {url: '/homepage', template: template_homepage, controller: 'homepageController'});
+		.state('Concours', {url: '/Concours', template: template_Concours, controller: 'ConcoursController'}).state('Favorites', {url: '/Favorites', template: template_Favorites, controller: 'FavoritesController'}).state('Location', {url: '/Location', template: template_Location, controller: 'LocationController'}).state('Locations', {url: '/Locations', template: template_Locations, controller: 'LocationsController'}).state('Search', {url: '/Search', template: template_Search, controller: 'SearchController'}).state('ShowSong', {url: '/ShowSong', template: template_ShowSong, controller: 'ShowSongController'}).state('User', {url: '/User', template: template_User, controller: 'UserController'}).state('auth', {url: '/auth', template: template_auth, controller: 'authController'}).state('homepage', {url: '/homepage', template: template_homepage, controller: 'homepageController'});
 
     $urlRouterProvider.otherwise('homepage');
 }]);
@@ -106,9 +125,31 @@ var app = angular
 console.log("Gooing to initialise controllers");
 
 angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;var firstLoad = true;
-		$scope.playEnabled = true;
-		var temps = 20000;
-		$scope.participants = [];
+$scope.playEnabled = true;
+var temps = 20000;
+$scope.participants = [];
+
+$scope.share = function () {
+  var options = {
+    message: 'Facile a gagner. Ouvrez JukeNet maintenant pour participer.',
+    subject: $rootScope.concour.name,
+    files: [$rootScope.concour.thumbnail], // an array of filenames either locally or remotely
+    url: 'http://toutrix.com/jn_share/concours?id=' + $rootScope.concour.id,
+    chooserTitle: $rootScope.concour.name // Android only, you can override the default share sheet title
+  }
+
+  var onSuccess = function(result) {
+    alert('Sharing success');
+    console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+    console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+  }
+
+  var onError = function(msg) {
+    console.log("Sharing failed with message: " + msg);
+  }
+
+  window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+}
 
 		firebase.database().ref('concours_users/' + $rootScope.concour.id + "/" + $scope.user.uid).once('value', function (snapshot) {
 			var c = snapshot.val();
@@ -190,15 +231,15 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
 			$scope.today_points++;
 			firstLoad = false;
 			firebase.database().ref('concours_users/' + $rootScope.concour.id + "/" + $scope.user.uid).update({points: $scope.points, today_points: $scope.today_points, last_day: $scope.last_day});
-			if(FacebookAds) {
-				//FacebookAds.showInterstitial();
-				FacebookAds.prepareInterstitial( {adId:adid.concours, autoShow:true} );
-			}
 
 			setTimeout( function () {
 				$scope.playEnabled = true;
 				temps = temps + 5000;
 			}, temps);
+			if (FacebookAds) {
+				//FacebookAds.showInterstitial();
+				FacebookAds.prepareInterstitial( {adId:adid.concours, autoShow:true} );
+			}
 		}}]);angular.module('app').controller('FavoritesController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$scope.likes = [];
 		$scope.dislikes = [];
 		$scope.dataLoading = true;
@@ -224,9 +265,11 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
       $rootScope.song = song;
       $state.go('ShowSong',{});
     }}]);angular.module('app').controller('LocationController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$scope.connected_users = [];
-		$scope.selected = [];
+$scope.selected = [];
 
-		$scope.messages = [];
+$scope.messages = [];
+
+console.log("IsAdmin?" + $rootScope.isAdmin());
 
 		function cmpAddedAt(a,b) {
 			if (a.addedAt > b.addedAt)
@@ -240,6 +283,7 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
 			if (typeof messages === "undefined" || messages == null) return;
 			Object.keys(messages).forEach(function(k) {
 				$rootScope.getUser(messages[k].userId, function (user) {
+                                    if (typeof user.publique === "undefined") return;
 					messages[k].photoURL = user.publique.photoURL;
 					messages[k].hour = millisecondsToStr(((Date.now() / 1000) - messages[k].addedAt)*1000);
 					$scope.$apply( function () {
@@ -268,9 +312,10 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
       console.log(response.data);
     });
 
-		$scope.showUser = function (user) {
-			$state.go('user',{user: user});
-		}
+$scope.showUser = function (user) {
+  $rootScope.show_the_user = user;
+  $state.go('User',{user: user});
+}
 
 		// Get stats for this location
 		console.log("Show location:");
@@ -315,9 +360,10 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
 			console.log("Wipe event sended");
 		}
 
-		$scope.remove_public = function () {
-			firebase.database().ref('servers/' + $rootScope.show_location.id).update({public:false});
-		}
+$scope.remove_public = function () {
+  show_location.public = false;
+  firebase.database().ref('servers/' + $rootScope.show_location.id).update({public:false});
+}
 
 		$scope.save_category = function () {
 			console.log("Saving category for that place");
@@ -329,6 +375,10 @@ angular.module('app').controller('ConcoursController', ['$scope', '$rootScope', 
 			alert("Categories saved");
 			//console.log(data);
 		}
+
+$scope.removePublic = function () {
+  firebase.database().ref('servers/' + $rootScope.show_location.id + "/public").set(false);
+}
 
 		$scope.toggle = function (item, list) {
 			var idx = list.indexOf(item);
@@ -378,7 +428,9 @@ $scope.showLocation = function (location) {
 			$rootScope.show_location = location;
 	    $state.go('Location',{});
 }}]);angular.module('app').controller('SearchController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;ext_homepage_scope = $scope;
+$scope.the_search = {keyword: $rootScope.keyword}
 $scope.keyword2 = $rootScope.keyword;
+console.log("First search for: " + $scope.the_search.keyword);
 $scope.dataLoading = false;
 
 $scope.show_song = function (song) {
@@ -387,13 +439,15 @@ $scope.show_song = function (song) {
 }
 
 $scope.do_search = function() {
-  $rootScope.keyword = $scope.keyword2;
+  $rootScope.keyword = $scope.the_search.keyword;
+  $scope.the_search.keyword = "";
+  $scope.keyword2 = $rootScope.keyword;
   $scope.dataLoading = true;
   $scope.no_result_show = 0;
   document.activeElement.blur();
   $http({
         method: 'GET',
-        url: jukenet_url_backend + '/jukenet_svc/search?userId=' + $rootScope.user.uid + '&q=' + $scope.keyword2
+        url: jukenet_url_backend + '/jukenet_svc/search?userId=' + $rootScope.user.uid + '&q=' + $rootScope.keyword
   }).then(function successCallback(response) {
 				$scope.dataLoading = false;
 				$scope.results = response.data;
@@ -410,8 +464,27 @@ $scope.do_search = function() {
 }
 
 $scope.do_search();}]);angular.module('app').controller('ShowSongController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$scope.showModal = false;
-		$scope.like_button = "J'aime";
-    $scope.song = $rootScope.song;
+$scope.like_button = "J'aime";
+$scope.song = $rootScope.song;
+
+$scope.share = function () {
+  console.log("Share button clicked");
+  var options = {
+    url: 'http://toutrix.com/jn_share/song?id=' + $rootScope.song.id
+  }
+
+  var onSuccess = function(result) {
+    alert('Sharing success');
+    console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+    console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+  }
+
+  var onError = function(msg) {
+    console.log("Sharing failed with message: " + msg);
+  }
+
+  window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+}
 
 		if ($rootScope.isAdmin() && typeof $rootScope.song.id !== "undefined") {
 			$rootScope.getSong($rootScope.song.id, function (song) {
@@ -591,11 +664,13 @@ $scope.do_search();}]);angular.module('app').controller('ShowSongController', ['
 		}
 		get_user_like();
 
-    $scope.ask_enabled = function () {
-			if (!$rootScope.user) return true;
-      if (requested) return true;
-      return false;
-    }
+$scope.ask_enabled = function () {
+  console.log("Do we have  a loc:", $rootScope.do_we_have_a_loc());
+  if (!$rootScope.do_we_have_a_loc()) return true;
+  if (!$rootScope.user) return true;
+  if (requested) return true;
+  return false;
+}
 
     if (typeof $scope.song === "undefined") {
       $state.go('homepage',{});
@@ -611,7 +686,7 @@ $scope.do_search();}]);angular.module('app').controller('ShowSongController', ['
 			user_like = {like: -1}
 			firebase.database().ref('users_likes/' + $rootScope.user.uid + '/' + $scope.song.id).set(user_like);
 
-			if ($scope.song.id == $rootScope.playing.id)
+			if (typeof $rootScope.playing !== "undefined" && $scope.song.id == $rootScope.playing.id)
 				$rootScope.skip_song($rootScope.playing.id);
 		}
 
@@ -695,41 +770,137 @@ $scope.do_search();}]);angular.module('app').controller('ShowSongController', ['
       }).then(function successCallback(response) {
       }, function errorCallback(response) {
       });
-		}}]);angular.module('app').controller('homepageController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$scope.editing = false;
-$scope.editingWaitress = false;
-$scope.isPublicMsg = true;
-$timeout(function() {}, 1000);
+		}}]);angular.module('app').controller('UserController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$scope.user_groups = [];
+var the_user_id = $rootScope.show_the_user.userId;
 
-$scope.list_locations = function () {
-	$state.go('Locations',{});
+$scope.user = {}
+$rootScope.getUser(the_user_id, function (us) {
+	$scope.$apply( function () {
+		$scope.user = us;
+		$scope.user.uid = the_user_id
+		$scope.user_groups = [];
+		if (us.groupes != null)
+			Object.keys(us.groupes).forEach( function (key) {
+				$scope.user_groups.push(key);
+			});
+	});
+});
+
+$scope.addGroup = function (group) {
+	var group2 = {}
+	group2[group] = true;
+	firebase.database().ref('users/' + $scope.user.uid + "/groupes").set(group2);
+}}]);angular.module('app').controller('authController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;console.log("Inside Auth controller");
+$scope.problem = "";
+$scope.dataLoading = false;
+$scope.clicked_fb = false;
+
+$scope.con_fb = function () {
+  if ($scope.clicked_fb) return;
+  $scope.clicked_fb = true;
+  console.log("Connecting with FaceBook clicked");
+  $scope.dataLoading = true;
+  $rootScope.loginFb(function (err) {
+				console.log("Error back in con_fb");
+				$scope.dataLoading = false;
+				$scope.clicked_fb = false;
+				$rootScope.send_error(err);
+				$scope.problem = "";
+
+				facebookConnectPlugin.getLoginStatus(function (status) {
+					$scope.problem += " fbStatus: " + status.status;
+					$scope.$apply(function(){});
+					if (status.status == "connected")
+						return fbLoginSuccess(status);
+				}, function() {
+				});
+				$scope.problem += err.errorMessage;
+				$scope.$apply(function(){});
+  });
 }
 
-		$scope.preorder = function () {
-			$state.go('Preorder',{});
-		}
-
-		$scope.skip = function () {
-			$rootScope.skip_song($rootScope.playing.id);
-		}
-
-    $scope.do_search = function(keyword) {
-			if (typeof keyword !== "undefined")
-				$scope.keyword = keyword;
-			$rootScope.keyword = $scope.keyword;
-			$state.go('Search');
+$scope.con_form = function () {
+  console.log("JukeNet connecting with form");
+  firebase.auth().signInWithEmailAndPassword($scope.courriel, $scope.password)
+  .then(function(user) {
+    $scope.problem = "";
+    console.log("Connected user:");
+    console.log(user);
+    $rootScope.user = user;
+    $state.go('homepage',{});
+    $scope.afterConnect();
+    $timeout(function() {}, 10);
+  }).catch(function(err) {
+    // Handle errors
+    console.log("Handling error");
+    console.log(err);
+    console.log(err.message);
+    if (err.code == "auth/user-not-found") {
+      firebase.auth().createUserWithEmailAndPassword($scope.courriel, $scope.password)
+      .then(function(user) {
+        console.log("New user:");
+        console.log(user);
+        $rootScope.user = user;
+        $state.go('homepage',{});
+        $scope.afterConnect();
+      }).catch(function (err) {
+    console.log("Calissse");
+        $scope.problem = err.message;
+        $timeout(function() {}, 10);
+        // Handle errors
+      });
+    } else {
+console.log("Should show the error problem");
+      $scope.problem = err.message;
+      $timeout(function() {}, 10);
     }
+  });
+}}]);angular.module('app').controller('homepageController', ['$scope', '$rootScope', '$state',  '$http', '$window', '$interval', '$timeout', '$stateParams', function($scope, $rootScope, $state, $http, $window, $interval, $timeout, $stateParams) { var scope = $scope;$rootScope.ga_track('homepage');
 
-		$scope.editName = function () {
-			$scope.editing = true;
-		}
+$scope.editing = false;
+$scope.editingWaitress = false;
+$scope.isPublicMsg = true;
+$scope.the_search = {keyword : ""}
+$timeout(function() {}, 1000);
+
+setInterval( function () {
+  if ($rootScope.choose_location) {
+    var modal = document.querySelector('ons-modal');
+    if (typeof modal !== "undefined" && modal !== null)   modal.show();
+  }
+}, 1000);
+
+$scope.list_locations = function () {
+  $scope.myTabbar.setActiveTab(2);
+}
+
+$scope.preorder = function () {
+  $state.go('Preorder',{});
+}
+
+$scope.skip = function () {
+  $rootScope.skip_song($rootScope.playing.id);
+}
+
+$scope.do_search = function() {
+  console.log("In home page keyword: " + $scope.the_search.keyword);
+  $rootScope.keyword = $scope.the_search.keyword;
+  $state.go('Search');
+}
+
+$scope.editName = function () {
+  $scope.editing = true;
+}
 
 		$scope.editWaitress = function () {
 			$scope.editingWaitress = true;
+/*
 			firebase.database().ref('public_msg/' + $rootScope.location.id).once('value').then( function (msg) {
 				$scope.$apply(function() {
 					$scope.publicMsg = msg.val().msg;
 				});
 			});
+*/
 		}
 
 		$scope.soundEffect = function (url) {
@@ -744,12 +915,13 @@ $scope.list_locations = function () {
 		    });
 		}
 
-		$scope.saveWaitress = function () {
-			console.log("Saving waitress msg");
-			$scope.editingWaitress = false;
-			firebase.database().ref('servers_posts/' + $rootScope.location.id).push().set({public: $scope.isPublicMsg, userId: $scope.user.uid, msg:$scope.publicMsg, addedAt: Math.floor(Date.now() / 1000)});
-			firebase.database().ref('public_msg/' + $rootScope.location.id).update({public: $scope.isPublicMsg, userId: $scope.user.uid, msg:$scope.publicMsg, addedAt: Math.floor(Date.now() / 1000)});
-		}
+$scope.saveWaitress = function () {
+  console.log("Saving waitress msg");
+  $scope.editingWaitress = false;
+  firebase.database().ref('servers_posts/' + $rootScope.location.id).push().set({public: $scope.isPublicMsg, userId: $scope.user.uid, msg:$scope.publicMsg, addedAt: Math.floor(Date.now() / 1000)});
+  firebase.database().ref('public_msg/' + $rootScope.location.id).update({public: $scope.isPublicMsg, userId: $scope.user.uid, msg:$scope.publicMsg, addedAt: Math.floor(Date.now() / 1000)});
+  $scope.publicMsg = "";
+}
 
 		$scope.saveName = function () {
 			$http({
@@ -779,19 +951,52 @@ $scope.list_locations = function () {
 		    });
 		}
 
-    $scope.go_favorites = function () {
-      $state.go('Favorites',{});
-    }
+$scope.go_favorites = function () {
+  $state.go('Favorites',{});
+}
 
-		$scope.isSkipVisible = function () {
-			console.log("isSkipVisible: " + $rootScope.skip_enabled);
-			return $rootScope.skip_enabled;
-		}}]);
+$scope.isSkipVisible = function () {
+  console.log("isSkipVisible: " + $rootScope.skip_enabled);
+  return $rootScope.skip_enabled;
+}
+
+$scope.location_class = function (location) {
+  if (typeof location.mode === "undefined") return "jukenet_server";
+  if (location.mode == "Karaoke" || location.mode == "DJ") return "jukenet_dj";
+  return "fa fa-globe";
+}
+
+var get_user_likes = function () {
+  console.log("get_user_likes started");
+  $http({
+         method: 'GET',
+         url: jukenet_url_backend + '/jukenet_svc/get_favorites?userId=' + $rootScope.user.uid
+  }).then(function successCallback(response) {
+	console.log("After get_favorites:");
+	console.log(response);
+	$scope.likes = response.data.likes;
+	$scope.dislikes = response.data.dislikes;
+	$scope.dataLoading = false;
+	console.log($scope.likes);
+  }, function errorCallback(response) {
+    console.log("Serious problem....!!!");
+  });
+}
+
+$timeout( function () {
+  get_user_likes();
+}, 5000);
+
+$scope.showLocation = function (location) {
+  $rootScope.show_location = location;
+  $state.go('Location',{});
+}}]);
 
 app.run(function ($http, $rootScope, $location, $state, $window, $interval, $timeout) {
 	console.log("Loading angular app");
+
 	$rootScope.error = {message:"", show_error: false}
-	if (0 == 1) {
+	if (true == 1) {
 		$rootScope.isLogged = false;
 	} else {
 		$rootScope.isLogged = true;
@@ -803,7 +1008,7 @@ app.run(function ($http, $rootScope, $location, $state, $window, $interval, $tim
 		console.log("Actual user:");
 		console.log(user);
 		$rootScope.user = user;
-		if (0 == 1) {
+		if (true == 1) {
 			if ($rootScope.user == null && typeof facebookConnectPlugin !== "undefined") {
 				return $state.go('auth');
 			} else if ($rootScope.user == null) {
@@ -818,6 +1023,10 @@ app.run(function ($http, $rootScope, $location, $state, $window, $interval, $tim
 		if (typeof $rootScope.onAppReady !== "undefined")
 			$rootScope.onAppReady();
 	});
+
+	$rootScope.image_url = function (url) {
+		return url;
+	}
 
 	$rootScope.googleSignin = function () {
 		var provider = new firebase.auth.GoogleAuthProvider();
@@ -910,17 +1119,26 @@ var ad_units = {
 var adid = (/(android)/i.test(navigator.userAgent)) ? ad_units.android : ad_units.ios;
 var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
+$rootScope.registrationId = null;
+$rootScope.got_a_loc = false;
+$rootScope.connected = 10; // Nbr connected with him
+$rootScope.need_to_skip = 5;
+$rootScope.skip_enabled = true;
+$rootScope.gps_loc = {latitude: 0, longitude: 0}
+$rootScope.deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "null";
+$rootScope.devicePlatform = (navigator.userAgent.match(/iPad/i))  == "iPad" ? "IOS" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "IOS" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "null";
+console.log($rootScope.devicePlatform);
 
-	$rootScope.got_a_loc = false;
-	$rootScope.connected = 10; // Nbr connected with him
-	$rootScope.need_to_skip = 5;
-	$rootScope.skip_enabled = true;
-	$rootScope.gps_loc = {latitude: 0, longitude: 0}
-	$rootScope.deviceType = (navigator.userAgent.match(/iPad/i))  == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "null";
-	$rootScope.devicePlatform = (navigator.userAgent.match(/iPad/i))  == "iPad" ? "IOS" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "IOS" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "null";
-	console.log($rootScope.devicePlatform);
+var facebookUserId;
 
-	var facebookUserId;
+if (typeof window.ga !== "undefined") {
+  window.ga.startTrackerWithId('UA-66999817-4', 30);
+}
+
+$rootScope.ga_track = function (page) {
+  if (typeof window.ga !== "undefined")
+    window.ga.trackView(page);
+}
 
   if (typeof StatusBar !== "undefined") {
 	StatusBar.hide();
@@ -934,9 +1152,28 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 				position:FacebookAds.AD_POSITION.BOTTOM_CENTER, 
 				autoShow:true} );
 
-  $rootScope.retour = function () {
-		$window.history.back();
-	}
+var push = PushNotification.init({ "android": {"senderID": "226308297309"}, "ios": {"senderID": "226308297309", alert: "true",badge: "true",sound: "true"	}});
+ push.on('registration', function(data) {
+    $rootScope.registrationId = data.registrationId;
+    console.log("Registration ID: " + data.registrationId);
+    //alert(JSON.stringify(data));
+    //alert("Registration ID: " + data.registrationId);
+    if (typeof $rootScope.user !== "undefined" && typeof $rootScope.user.uid !== "undefined") {
+        firebase.database().ref("users/" + $rootScope.user.uid + "/registrationId/" + data.registrationId).set({deviceType: $rootScope.deviceType, addedAt: Math.round(new Date().getTime()/1000)});
+    }
+ });
+
+ push.on('notification', function(data) {
+   alert(data.title+" Message: " +data.message);
+ });
+
+ push.on('error', function(e) {
+   alert(e);
+ });
+
+$rootScope.retour = function () {
+  $window.history.back();
+}
 
 	$rootScope.send_error = function (msg, err) {
 		var data = {msg: msg}
@@ -989,10 +1226,10 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       console.log(response.data);
     });
   }
-	get_categories();
+get_categories();
 
-	$rootScope.artists = null;
-  var get_artists = function() {
+$rootScope.artists = null;
+var get_artists = function() {
 		function compare(a,b) {
 			if (a.name < b.name)
 			  return -1;
@@ -1004,7 +1241,6 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 		var artistsRef = firebase.database().ref('artists');
 		artistsRef.on('value', function(artists) {
 			artists = artists.val();
-			//$rootScope.artists = artists.val();
 			$rootScope.artists = [];
 			Object.keys(artists).forEach(function (k) {
 				var ar = artists[k];
@@ -1013,8 +1249,8 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 			});
 			$rootScope.artists.sort(compare);
 		});
-  }
-	get_artists();
+}
+get_artists();
 
 	$rootScope.do_we_got_a_loc = function () {
 		return $rootScope.got_a_loc;
@@ -1106,8 +1342,8 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 	$rootScope.getFavorite = function(songId) {
 		var found;
 		if ($rootScope.favorites == null) return null;
-		console.log("Our favorite:");
-		console.log($rootScope.favorites);
+		//console.log("Our favorite:");
+		//console.log($rootScope.favorites);
 		Object.keys($rootScope.favorites).forEach(function(k) {
 			if (k == songId) found = $rootScope.favorites[k];
 		});
@@ -1115,14 +1351,13 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 	}
 
 	$rootScope.getSongIcon = function (songId) {
-		var found;
+		var found = null;
 		if ($rootScope.favorites == null) return "";
-		console.log("Our favorite:");
-		console.log($rootScope.favorites);
 		Object.keys($rootScope.favorites).forEach(function(k) {
 			if (k == songId) found = $rootScope.favorites[k];
 		});
 		var out = "invisible";
+                if (found == null) return out;
 		if (found.like == 1) out = "like";
 		if (found.like == -1) out = "block";
 		return out;
@@ -1159,15 +1394,16 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 		});
 	}
 
-	$rootScope.onConnect = function () {
+$rootScope.onConnect = function () {
+          console.log("onConnect started");
 		var key = "users/" + $rootScope.user.uid;
 		firebase.database().ref(key).once('value', function (the_user) {
 			the_user = the_user.val();
 			$rootScope.user_groups = [];
 			if (typeof the_user.groupes !== "undefined") {
 				$rootScope.user.groups = the_user.groupes;
-				//console.log("Groups:");
-				//console.log(the_user.groupes);
+				console.log("Groups:");
+				console.log(the_user.groupes);
 				Object.keys(the_user.groupes).forEach( function (key) {
 					$rootScope.user_groups.push(key);
 				});
@@ -1178,35 +1414,39 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 			console.log(the_user);
 			if (typeof the_user.need_relogin !== "undefined" && the_user.need_relogin) {
 				// Server asked for a relogin
-				//if ($rootScope.user.uid == "JV2XRBzBcLhq20m7gKryZm9WBED3")
-					return $state.go('Auth');
+				return $state.go('Auth');
 			}
 		});
 		get_favorites($rootScope.user.uid);
-	}
 
-	$rootScope.master_skip = function () {
-		var key2 = 'events/' + $rootScope.location.id;
-		firebase.database().ref(key2).push().set({message:"skip"});
+  if ($rootScope.registrationId != null) {
+      firebase.database().ref("users/" + $rootScope.user.uid + "/registrationId/" + $rootScope.registrationId).set({deviceType: $rootScope.deviceType, addedAt: Math.round(new Date().getTime()/1000)});
+  }
+}
 
-		$http({
-			method: 'GET',
-			url: jukenet_url_backend + '/jukenet_svc/skip?userId=' + $rootScope.user.uid + '&songId=' + $rootScope.playing.id + '&serverId=' + $rootScope.location.id
-		}).then(function successCallback(response) {
-		}, function errorCallback(response) {
-		});
-	}
+$rootScope.master_skip = function () {
+  var key2 = 'events/' + $rootScope.location.id;
+  firebase.database().ref(key2).push().set({message:"skip"});
 
-	$rootScope.master_skip_playlist = function (request) {
+  $http({
+    method: 'GET',
+    url: jukenet_url_backend + '/jukenet_svc/skip?userId=' + $rootScope.user.uid + '&songId=' + $rootScope.playing.id + '&serverId=' + $rootScope.location.id
+  }).then(function successCallback(response) {
+  }, function errorCallback(response) {
+  });
+  $event.stopPropagation();
+}
+
+$rootScope.master_skip_playlist = function (request) {
 		$http({
 			method: 'GET',
 			url: jukenet_url_backend + '/jukenet_svc/skip?userId=' + $rootScope.user.uid + '&songId=' + request.id + '&serverId=' + $rootScope.location.id
 		}).then(function successCallback(response) {
 		}, function errorCallback(response) {
 		});
-	}
+}
 
-	// TODO - Enregistrer le dernier skip pour etre sur quil ne puisse le faire 2-3 fois sur la meme chanson
+// TODO - Enregistrer le dernier skip pour etre sur quil ne puisse le faire 2-3 fois sur la meme chanson
   $rootScope.skip_song = function(songId) {
 		if (!$rootScope.skip_enabled) return;
 		$rootScope.skip_enabled = false;
@@ -1234,12 +1474,12 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 			});
 		} else {
 			// Ok c'est probablement dans la playlist
-			
 		}
   }
 
-	$rootScope.choose_location = false;
-	$rootScope.getLocation = function() {
+$rootScope.choose_location = false;
+$rootScope.serverChoosed = false;
+$rootScope.getLocation = function() {
 		console.log("getLocation started");
 		if (global_pos != null) {
 			var url = jukenet_url_backend + "/jukenet_svc/get_location?lat=" + global_pos.latitude + "&long=" + global_pos.longitude;
@@ -1253,7 +1493,7 @@ var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 			$rootScope.locations = response.data;
 console.log("Locations", $rootScope.locations);
 			if (response.data.length > 1) {
-console.log("Asking for his location");
+if (!$rootScope.serverChoosed)
 				$rootScope.choose_location = true;
 			} else if (response.data.length == 1) {
 				$rootScope.choose_location = false;
@@ -1269,30 +1509,35 @@ console.log("Asking for his location");
 			console.log("Current location:");
     }, function myError(response) {
     });
+}
+$rootScope.getLocation();
+$interval($rootScope.getLocation, 60000);
+
+$rootScope.chooseLocation = function (server) {
+  console.log("Server choosed:", server);
+  $rootScope.location = server;
+  if (typeof $rootScope.placeId === "undefined") {
+		change_location(server);
+		ping();
+		if ($rootScope.got_a_loc)
+			get_connected();
+  } else {
+		// This is a place, not a server or DJ
   }
-  $rootScope.getLocation();
-	$interval($rootScope.getLocation, 60000);
+  var modal = document.querySelector('ons-modal');
+  modal.hide();
+  $rootScope.choose_location = false;
+  $rootScope.serverChoosed = true;
+}
 
-	$rootScope.chooseLocation = function (server) {
-		console.log("Server choosed:", server);
-    $rootScope.location = server;
-		if (typeof $rootScope.placeId === "undefined") {
-			change_location(server);
-			ping();
-			if ($rootScope.got_a_loc)
-				get_connected();
-		} else {
-			// This is a place, not a server or DJ
-		}
-	}
-
-	// Check if global pos has changed
-	$interval( function () {
+// Check if global pos has changed
+$interval( function () {
 		if (global_pos != null && !$rootScope.got_a_loc) {
 			if ($rootScope.gps_loc.latitude != global_pos.latitude || $rootScope.gps_loc.longitude != global_pos.longitude) {
 				$rootScope.gps_loc.latitude = global_pos.latitude;
 				$rootScope.gps_loc.longitude = global_pos.longitude;
 				$rootScope.getLocation();
+get_all_locations();
 			}
 		}		
 	}, 1000);
@@ -1305,6 +1550,11 @@ console.log("Asking for his location");
 		if (playlistRef != null)
 			playlistRef.off("value");
 	}
+
+$rootScope.do_we_have_a_loc = function () {
+  var got_a = $rootScope.got_a_loc;
+  return got_a;
+}
 
 	function change_location(location) {
 		if (typeof location === "undefined" && typeof location.id !== "undefined") return;
@@ -1322,6 +1572,7 @@ console.log("Asking for his location");
 			$rootScope.mode = location.mode;
 		console.log("Server mode: ", $rootScope.mode);
 
+		if ($rootScope.mode == "server") {
 		var key = 'playing/' + location.id;
 		playingRef = firebase.database().ref(key);
 		playingRef.on('value', function(songId) {
@@ -1353,6 +1604,7 @@ console.log("Asking for his location");
 				}
 			});
 		});
+                }
 	}
 
 	firebase.database().ref('concours').on('value', function (snapshot) {
@@ -1404,7 +1656,25 @@ console.log("Asking for his location");
 		}, function(error) {
 			alert("Sorry. something wrong happen");
 		});
-	}
+}
+
+function get_all_locations() {
+  var th_url = "/jukenet_svc/list_locations";
+  if (global_pos)
+	th_url += "?lat=" + global_pos.latitude + "&long=" + global_pos.longitude;
+
+  $http({
+        method: 'GET',
+        url: jukenet_url_backend + th_url
+		}).then(function successCallback(response) {
+			console.log("After get_location");
+			console.log(response);
+			$rootScope.all_locations = response.data;
+  }, function errorCallback(response) {
+			console.log("Serious problem....!!!");
+  });
+}
+get_all_locations();
 });
 
 app.directive('ngAllowTab', function () {

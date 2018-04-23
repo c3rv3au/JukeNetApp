@@ -11,7 +11,7 @@ function check(callback) {
 	var manifest = JSON.parse(localStorage.getItem('ui-manifest'));
 	if (typeof manifest === "undefined" || manifest == null)
 		manifest = {version: 0}
-	console.log("Checking for update...");
+
 	$.ajax({
 		type:     "GET",
 		url:      "http://toutrix.com/ui_builder/manifest?project=" + project_id,
@@ -34,7 +34,7 @@ function check(callback) {
 
 function download_css(callback) {
 	var fileTransfer = new FileTransfer();
-	var uri = encodeURI("https://storage.googleapis.com/ui_src/" + project_id + "/app.css");
+	var uri = encodeURI("http://toutrix.com/ui_builder/css?project=" + project_id);
 	var fileURL = nativePath + "app.css";
 
 	console.log("Writing app.css to: " + fileURL);
@@ -52,11 +52,7 @@ function download_css(callback) {
       console.log("download error target " + error.target);
       console.log("download error code" + error.code);
 			callback(error);
-	  },
-		false,
-		{
-			Connection: "close"
-		}
+	  }
 	);
 }
 
@@ -101,7 +97,6 @@ function load() {
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
- setTimeout( function () {
 	console.log("Device is ready");
 	var the_dir = cordova.file.dataDirectory;
 	if (device.platform == "iOS")
@@ -124,5 +119,4 @@ function onDeviceReady() {
 			}
 		});
 	});
- }, 5000);
 }

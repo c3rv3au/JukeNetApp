@@ -59,6 +59,7 @@
         "cordova-plugin-facebookads": "^4.23.2",
         "cordova-plugin-file": "~4.1.1",
         "cordova-plugin-file-transfer": "~1.5.0",
+        "cordova-plugin-firebase-dynamiclinks": "^0.13.1",
         "cordova-plugin-geolocation": "~2.1.0",
         "cordova-plugin-globalization": "~1.0.3",
         "cordova-plugin-network-information": "~1.2.0",
@@ -66,6 +67,7 @@
         "cordova-plugin-statusbar": "~2.1.2",
         "cordova-plugin-uniquedeviceid": "https://github.com/Paldom/UniqueDeviceID.git",
         "cordova-plugin-vibration": "~2.1.0",
-        "cordova-plugin-whitelist": "~1.2.1"
+        "cordova-plugin-whitelist": "~1.2.1",
+        "cordova-support-google-services": "^1.1.0"
     }
 }

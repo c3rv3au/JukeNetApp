@@ -49,6 +49,7 @@ function download_css(callback) {
 			callback(null);
 	  },
 	  function(error) {
+			$('#ui-text').html("Erreur du téléchargement du visuel");
 			console.log("app.css not downloaded.");
       console.log("download error source " + error.source);
       console.log("download error target " + error.target);
@@ -76,13 +77,13 @@ function update(callback) {
 		},
 		error: function(){
 			console.log("Got an error downloading app.js");
+			$('#ui-text').html("Erreur du téléchargement de l'app");
 			return callback(false);
 		}
 	});
 }
 
 function load() {
-	$('#ui-loader').hide();
 	console.log("Loading css");
 	css_file_path = localStorage.getItem('css_url');
 	if (css_file_path != null) {
@@ -94,6 +95,7 @@ function load() {
 	}
 
 	console.log("Loading script");
+	$('#ui-loader').hide();
 	var F=new Function (localStorage.getItem('appjs'));
 	return(F());
 }

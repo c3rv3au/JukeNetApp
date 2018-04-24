@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.toutrix.jukenet" version="0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.toutrix.jukenet" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>JukeNet</name>
     <description>
     </description>
@@ -43,6 +43,7 @@
         <icon height="152" platform="ios" src="www/res/icon/ios/icon-76-2x.png" width="152" />
         <icon height="29" platform="ios" src="www/res/icon/ios/icon-small.png" width="29" />
         <icon height="58" platform="ios" src="www/res/icon/ios/icon-small-2x.png" width="58" />
+        <icon height="1024" platform="ios" src="www/res/icon/ios/icon-1024.png" width="1024" />
         <splash height="480" src="www/res/screen/ios/Default.png" width="320" />
         <splash height="960" src="www/res/screen/ios/Default@2x.png" width="640" />
         <splash height="1136" src="www/res/screen/ios/Default-568h@2x.png" width="640" />

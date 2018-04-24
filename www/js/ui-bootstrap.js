@@ -8,6 +8,7 @@ var filesystem;
 
 // Check if there is an update
 function check(callback) {
+	$('#ui-text').html("Vérification de mise à jour");
 	var manifest = JSON.parse(localStorage.getItem('ui-manifest'));
 	if (typeof manifest === "undefined" || manifest == null)
 		manifest = {version: 0}
@@ -33,6 +34,7 @@ function check(callback) {
 }
 
 function download_css(callback) {
+	$('#ui-text').html("Mise à jour du CSS");
 	var fileTransfer = new FileTransfer();
 	var uri = encodeURI("https://storage.googleapis.com/ui_src/" + project_id + "/app.css");
 	var fileURL = nativePath + "app.css";
@@ -58,6 +60,7 @@ function download_css(callback) {
 
 // Update script
 function update(callback) {
+	$('#ui-text').html("Mise à jour de l'app");
 	console.log("Updating script");
 	// Load the script
 	$.ajax({
@@ -79,6 +82,7 @@ function update(callback) {
 }
 
 function load() {
+	$('#ui-loader').hide();
 	console.log("Loading css");
 	css_file_path = localStorage.getItem('css_url');
 	if (css_file_path != null) {

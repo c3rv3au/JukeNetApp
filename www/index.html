@@ -1,1 +1,37 @@
-<!DOCTYPE HTML><html><head><title>JukeNet</title><meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" /><meta name="mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black" /><script type="text/javascript" src="cordova.js"></script><link rel="stylesheet" type="text/css"	href="css/onsenui.css" /><link rel="stylesheet" type="text/css" href="css/onsen-css-components.css" /><link rel="stylesheet" type="text/css" href="css/firebaseui.css" /><script type="text/javascript" src="js/firebase.js"></script><script type="text/javascript" src="js/firebaseui.js"></script><script type="text/javascript" src="js/angular.min.js"></script><script type="text/javascript" src="js/angular-route.min.js"></script><script type="text/javascript" src="js/angular-ui-router.min.js"></script><script type="text/javascript" src="js/jquery-3.3.1.min.js"></script><script src="js/onsenui.js"></script><script type="text/javascript" src="js/angular-onsenui.min.js"></script><script>var project_id = "jukenet";</script><script type="text/javascript" src="js/ui-bootstrap.js"></script></head><body><div id="layout" class="full" ui-view autoscroll="true"></div></body></html>
+<!DOCTYPE HTML><html><head><title>JukeNet</title><meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" /><meta name="mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-status-bar-style" content="black" /><script type="text/javascript" src="cordova.js"></script><link rel="stylesheet" type="text/css"	href="css/onsenui.css" /><link rel="stylesheet" type="text/css" href="css/onsen-css-components.css" /><link rel="stylesheet" type="text/css" href="css/firebaseui.css" /><script type="text/javascript" src="js/firebase.js"></script><script type="text/javascript" src="js/firebaseui.js"></script><script type="text/javascript" src="js/angular.min.js"></script><script type="text/javascript" src="js/angular-route.min.js"></script><script type="text/javascript" src="js/angular-ui-router.min.js"></script><script type="text/javascript" src="js/jquery-3.3.1.min.js"></script><script src="js/onsenui.js"></script><script type="text/javascript" src="js/angular-onsenui.min.js"></script><script>var project_id = "jukenet";</script><script type="text/javascript" src="js/ui-bootstrap.js"></script></head>
+<body>
+<div id="layout" class="full" ui-view autoscroll="true"></div>
+<style>
+.outer {
+  display: table;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: black;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 275px;
+  color: white;
+}
+
+.inner p {
+
+}
+</style>
+<div id="ui-loader" class="outer">
+  <div class="middle">
+    <div class="inner">
+      <img src="https://storage.googleapis.com/juke_imgs/logojukenet_transparent.png" height="90">
+      <div id='ui-text'>Chargement...</div>
+    </div>
+  </div>
+</div>
+</body></html>

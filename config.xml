@@ -77,7 +77,9 @@
     <plugin name="cordova-plugin-facebookads" spec="^4.23.2" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
-    <plugin name="cordova-plugin-geolocation" spec="^2.4.3" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="JukeNet need your location to identify if you are near a JukeNet player or the best places near you." />
+    </plugin>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-x-socialsharing" source="npm" />
     <plugin name="phonegap-plugin-push" spec="^2.1.2">
